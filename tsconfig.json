@@ -1,0 +1,10 @@
+{
+  /* Base configuration. Do not edit this field. */
+  "extends": "./temp/tsconfig.cocos.json",
+  "compilerOptions": {
+    "moduleResolution": "Node16",
+    "module": "Node16",
+    "target": "es2025",
+    "strict": false
+  }
+}
