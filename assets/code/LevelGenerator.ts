@@ -125,6 +125,7 @@ export async function createLevel(locale: "ru" | "en", index: number) {
 
         currLevel.scheme = nextScheme(currLevel.height, currLevel.width, index)
 
+        PlayerStorage.currLevel.value = currLevel
     }
     return new Level(currLevel)
 }

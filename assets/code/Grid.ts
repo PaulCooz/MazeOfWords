@@ -5,6 +5,8 @@ import { Level } from './Level'
 import { GridCell } from './GridCell'
 const { ccclass, property } = _decorator
 
+const MaxCellSize = 250
+
 @ccclass('Grid')
 export class Grid extends PipelineComponent {
     @property(Layout)
@@ -34,7 +36,7 @@ export class Grid extends PipelineComponent {
             for (let w = 0; w < this.level.width; w++) {
                 const item = instantiate(this.cellPrefab).getComponent(GridCell)
                 item.node.parent = this.layout.node
-                // TODO
+                item.setup(this.level.charAt(h, w))
                 this.cells.push(item)
             }
         }
@@ -46,10 +48,10 @@ export class Grid extends PipelineComponent {
         const ly = this.layout
         const h = this.level.height
         const w = this.level.width
-        const cellSize = Math.min(
+        const cellSize = Math.min(Math.min(
             (gridSize.x - ly.paddingLeft - ly.paddingRight - ly.spacingX * (w - 1)) / w,
             (gridSize.y - ly.paddingTop - ly.paddingBottom - ly.spacingY * (h - 1)) / h
-        )
+        ), MaxCellSize)
         ly.cellSize = new Size(cellSize, cellSize)
         ly.constraint = 2 // TODO enum
         ly.constraintNum = w

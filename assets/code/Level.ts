@@ -26,4 +26,8 @@ export class Level implements LevelData {
     constructor(data: LevelData) {
         Object.assign(this, data)
     }
+
+    charAt(i: number, j: number) {
+        return this.word[this.scheme.indexOf(i * this.width + j)]
+    }
 }

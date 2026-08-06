@@ -12,6 +12,11 @@ function set(key: string, value: any) {
     globalThis.changedLocalStorage = true
 }
 
+export function clearAllStorage() {
+    sys.localStorage.clear()
+    globalThis.changedLocalStorage = true
+}
+
 export class StorageValue<T> { // TODO add onChanged event
     private key: string
     private _value: T
