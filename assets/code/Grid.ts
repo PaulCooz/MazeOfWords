@@ -19,7 +19,7 @@ export class Grid extends PipelineComponent {
     @property(Prefab)
     cellPrefab: Prefab
 
-    private cells: GridCell[] = []
+    readonly cells: GridCell[] = []
 
     private level: Level
 
@@ -32,11 +32,11 @@ export class Grid extends PipelineComponent {
     }
 
     private createCells() {
-        for (let h = 0; h < this.level.height; h++) {
-            for (let w = 0; w < this.level.width; w++) {
+        for (let i = 0; i < this.level.height; i++) {
+            for (let j = 0; j < this.level.width; j++) {
                 const item = instantiate(this.cellPrefab).getComponent(GridCell)
                 item.node.parent = this.layout.node
-                item.setup(this.level.charAt(h, w))
+                item.setup(this.level.charAt(i, j), i, j)
                 this.cells.push(item)
             }
         }

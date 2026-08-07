@@ -35,6 +35,10 @@ async function checkWords(locale: string) {
     }
 }
 
+export function isWordExist(word: string) {
+    return wordsByLen[word.length]?.includes(word) ?? false
+}
+
 function nextWord(index: number) {
     const range = sizesRange.find(r => r.from <= index && (index < r.to || r.to == -1))
     const scoreToLen = {}
@@ -105,6 +109,8 @@ function nextScheme(height: number, width: number, index: number) {
 }
 
 export async function createLevel(locale: "ru" | "en", index: number) {
+    await checkWords(locale)
+
     let currLevel = PlayerStorage.currLevel.value
     if (currLevel == undefined || currLevel.index != index || currLevel.locale != locale) {
         currLevel = {
@@ -115,7 +121,6 @@ export async function createLevel(locale: "ru" | "en", index: number) {
             bonuses: [], openLetters: []
         }
 
-        await checkWords(locale)
         currLevel.word = nextWord(index)
 
         const wordLen = currLevel.word.length

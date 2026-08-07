@@ -1,3 +1,5 @@
+import { PlayerStorage } from "./PlayerStorage"
+
 export interface LevelData {
     index: number
     locale: string
@@ -29,5 +31,18 @@ export class Level implements LevelData {
 
     charAt(i: number, j: number) {
         return this.word[this.scheme.indexOf(i * this.width + j)]
+    }
+
+    saveAsCurr() {
+        PlayerStorage.currLevel.value = {
+            index: this.index,
+            locale: this.locale,
+            word: this.word,
+            height: this.height,
+            width: this.width,
+            scheme: this.scheme,
+            bonuses: this.bonuses,
+            openLetters: this.openLetters,
+        }
     }
 }
