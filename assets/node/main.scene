@@ -443,7 +443,7 @@
     "_fontSize": 60,
     "_fontFamily": "Arial",
     "_lineHeight": 60,
-    "_overflow": 2,
+    "_overflow": 3,
     "_enableWrapText": false,
     "_font": {
       "__uuid__": "5bcc2211-35ca-4ac0-8fad-713b7ae20c81",
@@ -506,7 +506,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -240,
+      "y": -260,
       "z": 0
     },
     "_lrot": {
@@ -545,7 +545,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 720,
-      "height": 60
+      "height": 75.6
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -571,7 +571,7 @@
     "_top": 0,
     "_bottom": 0,
     "_horizontalCenter": 0,
-    "_verticalCenter": -240,
+    "_verticalCenter": -260,
     "_isAbsLeft": true,
     "_isAbsRight": true,
     "_isAbsTop": true,
