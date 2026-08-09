@@ -1,0 +1,37 @@
+---
+description: Level pipeline and event-driven gameplay flow
+globs: assets/code/*.ts
+alwaysApply: false
+---
+
+# Pipeline architecture
+
+`GameManager` owns level lifecycle. Feature scripts extend `PipelineComponent` and are listed in the scene `pipeline` array.
+
+## Lifecycle contract
+
+1. **awake** — one-time wiring (listeners, hide UI). Called once from `GameManager.onLoad`.
+2. **levelStart(level)** — build/reset for a new `Level` (grid, input state, hide next button).
+3. **levelFinish** — react to main-word success (lock input, show next button).
+
+Add a new feature by implementing the needed hooks and registering the component on the Canvas pipeline in the editor — do not hardcode peer references in `GameManager`.
+
+## Cross-feature signals
+
+Use bubbling Cocos `Event` subclasses from `Common.ts` (e.g. `LevelCompleteEvent`, `LevelChangeEvent`). Dispatch from the feature node; `GameManager` listens on its node and drives the pipeline.
+
+```typescript
+// feature → manager
+this.node.dispatchEvent(new LevelCompleteEvent())
+
+// manager
+this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
+```
+
+Avoid direct `GameManager` imports from pipeline features.
+
+## Level data
+
+- `LevelGenerator.createLevel(locale, index)` builds or restores from `PlayerStorage.currLevel`.
+- Progress keys live in `PlayerStorage` (`levelIndex`, `prevLevel`, `currLevel`, word-cursor map).
+- Persist mid-level mutations via `Level.saveAsCurr()` (e.g. found bonuses).

@@ -1,0 +1,28 @@
+---
+description: Safe editing boundaries for scenes, metas, and generated folders
+alwaysApply: true
+---
+
+# Safe change surface
+
+## Prefer editing
+
+- `assets/code/**/*.ts` — gameplay and helpers
+- `README.md`, `.cursor/rules/**` — intent and agent guidance
+- Word lists under `assets/bundle/` when changing dictionary content
+
+## Edit with care
+
+- `assets/node/*.scene` / `*.prefab` — only when wiring components or layout; keep diffs minimal
+- `*.meta` — create/commit with new assets; never regenerate UUIDs for existing scripts still referenced in scenes
+
+## Do not edit / do not commit
+
+- `library/`, `temp/`, `local/`, `build/`, `profiles/` — Creator caches
+- Engine install paths or global Cocos settings
+
+## When scripts look “missing”
+
+1. Read `temp/logs/project.log` (or Console) for the **first** `SyntaxError` / import failure.
+2. Fix module-load crashes (storage, static init), then reload the project.
+3. Reinstalling Creator rarely helps if UUIDs in `.meta` still match the scene.

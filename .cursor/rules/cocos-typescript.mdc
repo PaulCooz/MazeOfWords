@@ -1,0 +1,38 @@
+---
+description: Cocos Creator TypeScript conventions and pitfalls
+globs: assets/code/**/*.ts
+alwaysApply: false
+---
+
+# Cocos TypeScript
+
+## Components
+
+- Use `@ccclass('ExactName')` matching the class; never rename casually — scenes store compressed UUID from `.meta`.
+- Wire scene references with `@property`; do not `find` by string at runtime unless unavoidable.
+- Put reusable, game-agnostic code under `self contained/`.
+
+## Module-load safety
+
+Static field init runs when the editor loads scripts. Anything that touches `localStorage`, bundles, or DOM in top-level/`static` constructors must not throw.
+
+```typescript
+// BAD — Missing class / scripts fail to register if parse throws
+JSON.parse(sys.localStorage.getItem(key))
+
+// GOOD — use StorageValue / guarded get-set in Storage.ts
+```
+
+If the console shows `Missing class: …` on Grid/Canvas, check **earlier** import errors first (often `PlayerStorage` / `Storage`).
+
+## Assets and persistence
+
+- Dictionaries: Asset Bundle `bundle`, files `words_all_en` / `words_all_ru`.
+- Prefer `StorageValue` for player progress; remove keys on `undefined` rather than storing `"undefined"`.
+- Tweens: prefer existing helpers (`toPromise` in Utils) for awaitable animations.
+
+## Editor artifacts
+
+- Commit `.meta` next to new scripts/prefabs.
+- Avoid hand-editing UUIDs in `.scene` / `.prefab` unless repairing a known broken reference.
+- Do not override Cocos-generated `tsconfig` module settings (`Node16` / `es2025` breaks the editor packer).

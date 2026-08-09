@@ -111,7 +111,7 @@ export class GridInput extends PipelineComponent {
         await this.playResult(result)
         this.clearPath(result != 'wrong')
 
-        if (result == 'bonus') {
+        if (result == 'bonus' && !this.level.bonuses.includes(word)) {
             this.level.bonuses.push(word)
             this.level.saveAsCurr()
         }
@@ -126,7 +126,7 @@ export class GridInput extends PipelineComponent {
     private evaluateWord(word: string): WordResult {
         if (word == this.level.word)
             return 'correct'
-        if (!this.level.bonuses.includes(word) && isWordExist(word))
+        if (isWordExist(word))
             return 'bonus'
         return 'wrong'
     }

@@ -1,14 +1,26 @@
 import { sys } from "cc"
 
 function get(key: string, defaultValue?: any) {
-    let t = JSON.parse(sys.localStorage.getItem(key))
-    return defaultValue != undefined ? (t ?? defaultValue) : t
+    try {
+        const raw = sys.localStorage.getItem(key)
+        if (raw != null && raw != "") {
+            const t = JSON.parse(raw)
+            return defaultValue != undefined ? (t ?? defaultValue) : t
+        }
+    } catch {
+        // ignore
+    }
+    return defaultValue
 }
 
 globalThis.changedLocalStorage = false
 
 function set(key: string, value: any) {
-    sys.localStorage.setItem(key, JSON.stringify(value))
+    if (value == undefined) {
+        sys.localStorage.removeItem(key)
+    } else {
+        sys.localStorage.setItem(key, JSON.stringify(value))
+    }
     globalThis.changedLocalStorage = true
 }
 

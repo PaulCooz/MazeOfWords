@@ -71,23 +71,17 @@ function nextWord(index: number) {
 
 function nextScheme(height: number, width: number, index: number, wordLen: number) {
     const rand = new Rand(index)
-    const path = [], used = {}, steps = [[-1, 0], [+1, 0], [0, -1], [0, +1]]
-    const prevPath = PlayerStorage.prevLevel.value?.scheme
+    const path = [], used = {}
     const stopWord = "found"
     const rec = (i: number, j: number) => {
         const idx = i * width + j
         used[idx] = true
         path.push(idx)
 
-        if (path.length == height * width) {
-            if (prevPath != undefined && path.every((v, i) => i < prevPath.length ? v == prevPath[i] : true)) {
-                used[idx] = undefined
-                path.pop()
-                return
-            }
+        if (path.length == height * width)
             throw stopWord
-        }
 
+        const steps = [[-1, 0], [+1, 0], [0, -1], [0, +1]]
         rand.shuffle(steps)
         for (const step of steps) {
             const ni = i + step[0], nj = j + step[1]
@@ -100,7 +94,15 @@ function nextScheme(height: number, width: number, index: number, wordLen: numbe
     }
 
     try {
-        rec(rand.rangeInt(0, height), rand.rangeInt(0, width))
+        const prevLevel = PlayerStorage.prevLevel?.value,
+            pi = prevLevel ? Math.trunc(prevLevel.scheme[0] / prevLevel.width) : -1,
+            pj = prevLevel ? prevLevel.scheme[0] % prevLevel.width : -1
+        while (true) {
+            const i = rand.rangeInt(0, height), j = rand.rangeInt(0, width)
+            if (pi == i && pj == j)
+                continue
+            rec(i, j)
+        }
     } catch (e) {
         if (e != stopWord)
             console.error(e)
