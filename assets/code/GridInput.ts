@@ -1,4 +1,4 @@
-import { _decorator, Color, NodeEventType, tween, Tween, Vec3 } from 'cc'
+import { _decorator, Color, Input, input, NodeEventType, tween, Tween, Vec3 } from 'cc'
 import { Grid } from './Grid'
 import { PipelineComponent } from './PipelineComponent'
 import { Level } from './Level'
@@ -8,7 +8,7 @@ import { toPromise } from './self contained/Utils'
 const { ccclass, property } = _decorator
 
 const SelectScale = 0.95
-const SelectDuration = 0.08
+const SelectDuration = 0.1
 const ResultDuration = 0.3
 
 const ColorSelected = new Color(130, 200, 255)
@@ -28,11 +28,13 @@ export class GridInput extends PipelineComponent {
     private busy = false
     private path: GridCell[] = []
 
-    public setup(level: Level) {
+    public levelStart(level: Level) {
         this.level = level
 
         this.grid.cells.forEach(cell => this.on(cell))
+
         this.node.on(NodeEventType.MOUSE_UP, this.mouseUp, this)
+        input.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
     }
 
     private on(cell: GridCell) {
@@ -164,15 +166,16 @@ export class GridInput extends PipelineComponent {
     private animateAccept(cells: GridCell[], color: Color) {
         return Promise.all(cells.map(cell => {
             this.stopCellTweens(cell)
-            const pulse = cell.defaultScale.clone().multiplyScalar(1.1)
-            return Promise.all([
-                toPromise(tween(cell.background).to(ResultDuration, { color })),
-                toPromise(
+            const pulse = cell.defaultScale.clone().multiplyScalar(1.05)
+            return toPromise(tween(cell.node)
+                .parallel(
+                    tween(cell.background)
+                        .to(ResultDuration, { color }),
                     tween(cell.node)
                         .to(ResultDuration * 0.5, { scale: pulse }, { easing: 'backOut' })
                         .to(ResultDuration * 0.5, { scale: cell.defaultScale }, { easing: 'sineIn' })
-                ),
-            ])
+                )
+            )
         }))
     }
 
@@ -180,20 +183,19 @@ export class GridInput extends PipelineComponent {
         return Promise.all(cells.map(cell => {
             this.stopCellTweens(cell)
             const pos = cell.node.position.clone()
-            return toPromise(
-                tween(cell.node)
-                    .parallel(
-                        tween(cell.background)
-                            .to(0.1, { color: ColorWrong })
-                            .to(0.15, { color: cell.defaultColor }),
-                        tween(cell.node)
-                            .to(0.05, { position: new Vec3(pos.x - 8, pos.y, pos.z) })
-                            .to(0.05, { position: new Vec3(pos.x + 8, pos.y, pos.z) })
-                            .to(0.05, { position: new Vec3(pos.x - 8, pos.y, pos.z) })
-                            .to(0.05, { position: new Vec3(pos.x + 8, pos.y, pos.z) })
-                            .to(0.05, { position: pos })
-                            .to(0.1, { scale: cell.defaultScale }, { easing: 'sineOut' }),
-                    )
+            return toPromise(tween(cell.node)
+                .parallel(
+                    tween(cell.background)
+                        .to(0.1, { color: ColorWrong })
+                        .to(0.15, { color: cell.defaultColor }),
+                    tween(cell.node)
+                        .to(0.05, { position: new Vec3(pos.x - 8, pos.y, pos.z) })
+                        .to(0.05, { position: new Vec3(pos.x + 8, pos.y, pos.z) })
+                        .to(0.05, { position: new Vec3(pos.x - 8, pos.y, pos.z) })
+                        .to(0.05, { position: new Vec3(pos.x + 8, pos.y, pos.z) })
+                        .to(0.05, { position: pos })
+                        .to(0.1, { scale: cell.defaultScale }, { easing: 'sineOut' }),
+                )
             )
         }))
     }

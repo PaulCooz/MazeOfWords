@@ -23,7 +23,7 @@ export class Grid extends PipelineComponent {
 
     private level: Level
 
-    setup(level: Level) {
+    levelStart(level: Level) {
         this.level = level
         this.createCells()
 

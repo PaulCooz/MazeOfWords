@@ -178,8 +178,11 @@
     "_lineHeight": 120,
     "_overflow": 2,
     "_enableWrapText": true,
-    "_font": null,
-    "_isSystemFontUsed": true,
+    "_font": {
+      "__uuid__": "5bcc2211-35ca-4ac0-8fad-713b7ae20c81",
+      "__expectedType__": "cc.TTFFont"
+    },
+    "_isSystemFontUsed": false,
     "_spacingX": 0,
     "_isItalic": false,
     "_isBold": false,
