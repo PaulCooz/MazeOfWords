@@ -1,8 +1,9 @@
-import { _decorator, Component, tween } from 'cc'
+import { _decorator, Component } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { createLevel } from './LevelGenerator'
 import { PlayerStorage } from './PlayerStorage'
 import { clearAllStorage } from './self contained/Storage'
+import { LevelChangeEvent, LevelCompleteEvent, Locale } from './Common'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')
@@ -10,28 +11,39 @@ export class GameManager extends Component {
     @property([PipelineComponent])
     pipeline: PipelineComponent[] = []
 
+    private locale: Locale = "ru"
+
     async onLoad() {
-        // TODO subscribe to level finish event
+        clearAllStorage()
+
+        this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
+        this.node.on(LevelChangeEvent.Name, this.levelNext, this)
 
         for (const p of this.pipeline) {
-            if (p.awake)
-                p.awake()
+            p.awake?.()
         }
 
-        const level = await createLevel("ru", PlayerStorage.levelIndex.value)
+        await this.startLevel(PlayerStorage.levelIndex.value)
+    }
+
+    private async startLevel(index: number) {
+        const level = await createLevel(this.locale, index)
         for (const p of this.pipeline) {
-            if (p.levelStart)
-                p.levelStart(level)
+            p.levelStart?.(level)
         }
     }
 
-    private levelFinish() {
+    private levelComplete() {
         for (const p of this.pipeline) {
-            if (p.levelFinish) {
-                p.levelFinish()
-            }
+            p.levelFinish?.()
         }
+    }
+
+    private async levelNext() {
+        PlayerStorage.prevLevel.value = PlayerStorage.currLevel.value
+        PlayerStorage.levelIndex.value++
+        PlayerStorage.currLevel.value = undefined
+
+        await this.startLevel(PlayerStorage.levelIndex.value)
     }
 }
-
-

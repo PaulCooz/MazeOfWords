@@ -24,11 +24,18 @@ export class Grid extends PipelineComponent {
     private level: Level
 
     levelStart(level: Level) {
+        this.clearCells()
+
         this.level = level
         this.createCells()
 
         this.aspectRatio.node.on(NodeEventType.SIZE_CHANGED, this.resizeCells, this)
         this.resizeCells()
+    }
+
+    private clearCells() {
+        this.layout.node.destroyAllChildren()
+        this.cells.length = 0
     }
 
     private createCells() {

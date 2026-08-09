@@ -177,7 +177,7 @@
     "_fontFamily": "Arial",
     "_lineHeight": 120,
     "_overflow": 2,
-    "_enableWrapText": true,
+    "_enableWrapText": false,
     "_font": {
       "__uuid__": "5bcc2211-35ca-4ac0-8fad-713b7ae20c81",
       "__expectedType__": "cc.TTFFont"

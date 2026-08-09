@@ -3,6 +3,7 @@ import { Rand } from "./self contained/Rand"
 import { loadBundle, loadFile } from "./self contained/Engine"
 import { Level } from "./Level"
 import { PlayerStorage } from "./PlayerStorage"
+import { Locale } from "./Common"
 
 const sizesRange = [
     { from: 0, to: 2, wordLength: [4] },
@@ -36,7 +37,7 @@ async function checkWords(locale: string) {
 }
 
 export function isWordExist(word: string) {
-    return wordsByLen[word.length]?.includes(word) ?? false
+    return word.length > 3 ? (wordsByLen[word.length]?.includes(word) ?? false) : false
 }
 
 function nextWord(index: number) {
@@ -68,34 +69,34 @@ function nextWord(index: number) {
     return wordsByLen[bestSize][wordIndex % wordsByLen.length]
 }
 
-function nextScheme(height: number, width: number, index: number) {
+function nextScheme(height: number, width: number, index: number, wordLen: number) {
     const rand = new Rand(index)
-    const used = {}
-    const path = []
-    const prevPath = PlayerStorage.prevLevel.value?.scheme ?? []
-
+    const path = [], used = {}, steps = [[-1, 0], [+1, 0], [0, -1], [0, +1]]
+    const prevPath = PlayerStorage.prevLevel.value?.scheme
     const stopWord = "found"
-    const steps = [[-1, 0], [+1, 0], [0, -1], [0, +1]]
     const rec = (i: number, j: number) => {
+        const idx = i * width + j
+        used[idx] = true
+        path.push(idx)
+
         if (path.length == height * width) {
-            if (path.length == prevPath.length && path.every((v, i) => v == prevPath[i]))
+            if (prevPath != undefined && path.every((v, i) => i < prevPath.length ? v == prevPath[i] : true)) {
+                used[idx] = undefined
+                path.pop()
                 return
+            }
             throw stopWord
         }
 
         rand.shuffle(steps)
         for (const step of steps) {
-            const ni = i + step[0], nj = j + step[1],
-                indx = ni * width + nj
-
-            if (0 <= ni && ni < height && 0 <= nj && nj < width && !used[indx]) {
-                used[indx] = true
-                path.push(indx)
+            const ni = i + step[0], nj = j + step[1]
+            if (0 <= ni && ni < height && 0 <= nj && nj < width && !used[ni * width + nj])
                 rec(ni, nj)
-                path.pop()
-                used[indx] = undefined
-            }
         }
+
+        used[idx] = undefined
+        path.pop()
     }
 
     try {
@@ -108,7 +109,7 @@ function nextScheme(height: number, width: number, index: number) {
     return path
 }
 
-export async function createLevel(locale: "ru" | "en", index: number) {
+export async function createLevel(locale: Locale, index: number) {
     await checkWords(locale)
 
     let currLevel = PlayerStorage.currLevel.value
@@ -128,7 +129,7 @@ export async function createLevel(locale: "ru" | "en", index: number) {
         if (currLevel.height * currLevel.width < wordLen)
             currLevel.height++
 
-        currLevel.scheme = nextScheme(currLevel.height, currLevel.width, index)
+        currLevel.scheme = nextScheme(currLevel.height, currLevel.width, index, currLevel.word.length)
 
         PlayerStorage.currLevel.value = currLevel
     }

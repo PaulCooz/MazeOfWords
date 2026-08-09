@@ -1,10 +1,11 @@
-import { _decorator, Color, Input, input, NodeEventType, tween, Tween, Vec3 } from 'cc'
+import { _decorator, Color, Input, input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
 import { Grid } from './Grid'
 import { PipelineComponent } from './PipelineComponent'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
 import { isWordExist } from './LevelGenerator'
 import { toPromise } from './self contained/Utils'
+import { LevelCompleteEvent } from './Common'
 const { ccclass, property } = _decorator
 
 const SelectScale = 0.95
@@ -22,28 +23,47 @@ type WordResult = 'correct' | 'bonus' | 'wrong'
 export class GridInput extends PipelineComponent {
     @property(Grid)
     grid: Grid
+    @property(Label)
+    wordLabel: Label
 
     private level: Level
-    private pressing = false
-    private busy = false
+    private pressing: boolean
+    private busy: boolean
+    private completed: boolean
     private path: GridCell[] = []
 
-    public levelStart(level: Level) {
-        this.level = level
+    get word() {
+        return this.path.map(c => c.letter.string).join('')
+    }
 
-        this.grid.cells.forEach(cell => this.on(cell))
-
+    awake() {
         this.node.on(NodeEventType.MOUSE_UP, this.mouseUp, this)
         input.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
     }
 
+    levelStart(level: Level) {
+        this.level = level
+        this.completed = false
+        this.busy = false
+        this.pressing = false
+        this.clearPath(false)
+        this.grid.cells.forEach(cell => this.on(cell))
+    }
+
+    levelFinish() {
+        this.completed = true
+    }
+
     private on(cell: GridCell) {
+        if (cell.empty)
+            return
+
         cell.node.on(NodeEventType.MOUSE_DOWN, () => this.mouseDown(cell), this)
         cell.node.on(NodeEventType.MOUSE_ENTER, () => this.enter(cell), this)
     }
 
     private mouseDown(cell: GridCell) {
-        if (this.busy)
+        if (this.busy || this.completed)
             return
 
         this.pressing = true
@@ -52,7 +72,7 @@ export class GridInput extends PipelineComponent {
     }
 
     private enter(cell: GridCell) {
-        if (!this.pressing || this.busy)
+        if (!this.pressing || this.busy || this.completed)
             return
 
         const last = this.path[this.path.length - 1]
@@ -61,7 +81,8 @@ export class GridInput extends PipelineComponent {
         if (cell == last)
             return
         if (cell == prev) {
-            this.deselectCell(this.path.pop()!)
+            this.updateLabel()
+            this.deselectCell(this.path.pop())
             return
         }
 
@@ -71,6 +92,7 @@ export class GridInput extends PipelineComponent {
             return
 
         this.path.push(cell)
+        this.updateLabel()
         this.selectCell(cell)
     }
 
@@ -82,7 +104,7 @@ export class GridInput extends PipelineComponent {
         if (this.path.length == 0)
             return
 
-        const word = this.path.map(c => c.letter.string).join('')
+        const word = this.word
         const result = this.evaluateWord(word)
 
         this.busy = true
@@ -94,19 +116,27 @@ export class GridInput extends PipelineComponent {
             this.level.saveAsCurr()
         }
 
+        if (result == 'correct') {
+            this.node.dispatchEvent(new LevelCompleteEvent())
+        }
+
         this.busy = false
     }
 
     private evaluateWord(word: string): WordResult {
         if (word == this.level.word)
             return 'correct'
-        if (!this.level.bonuses.includes(word) && word.length > 1 && isWordExist(word))
+        if (!this.level.bonuses.includes(word) && isWordExist(word))
             return 'bonus'
         return 'wrong'
     }
 
     private isAdjacent(a: GridCell, b: GridCell) {
         return Math.abs(a.i - b.i) + Math.abs(a.j - b.j) == 1
+    }
+
+    private updateLabel() {
+        this.wordLabel.string = this.word
     }
 
     private selectCell(cell: GridCell) {
@@ -138,12 +168,13 @@ export class GridInput extends PipelineComponent {
 
     private clearPath(animated: boolean) {
         while (this.path.length > 0) {
-            const cell = this.path.pop()!
+            const cell = this.path.pop()
             if (animated)
                 this.deselectCell(cell)
             else
                 this.resetCell(cell)
         }
+        this.updateLabel()
     }
 
     private stopCellTweens(cell: GridCell) {

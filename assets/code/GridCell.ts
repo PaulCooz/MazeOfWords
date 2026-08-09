@@ -8,17 +8,22 @@ export class GridCell extends Component {
     @property(Sprite)
     background: Sprite
 
-    readonly defaultColor = new Color()
-    readonly defaultScale = new Vec3()
+    readonly defaultColor = Color.WHITE
+    readonly defaultScale = Vec3.ONE
 
     i: number
     j: number
 
-    public setup(letter: string, i: number, j: number) {
-        this.defaultColor.set(this.background.color)
-        this.defaultScale.set(this.node.scale)
+    empty: boolean
 
-        this.letter.string = letter
+    public setup(letter: string, i: number, j: number) {
+        this.empty = letter == undefined
+        if (this.empty) {
+            this.node.scale = Vec3.ZERO
+        } else {
+            this.letter.string = letter
+        }
+
         this.i = i
         this.j = j
     }
