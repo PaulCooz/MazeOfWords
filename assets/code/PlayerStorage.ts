@@ -8,6 +8,8 @@ export class PlayerStorage {
     static currLevel = new StorageValue<LevelData>("currLevel")
     static lenToWordIndex = new StorageValue<{ [wordLen: number]: number }>("lenToWordIndex", {})
 
+    static coins = new StorageValue<number>("coins", 10)
+
     static clearAll() {
         clearAllStorage()
 

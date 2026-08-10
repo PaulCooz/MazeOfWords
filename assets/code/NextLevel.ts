@@ -35,7 +35,7 @@ export class NextLevel extends PipelineComponent {
             this.anim.stop()
 
         this.anim = tween(this.node)
-            .to(0.3, { scale: this.defaultScale }, { easing: 'backOut' })
+            .to(0.2, { scale: this.defaultScale }, { easing: 'backOut' })
             .call(() => this.button.interactable = true)
             .start()
     }
@@ -47,7 +47,7 @@ export class NextLevel extends PipelineComponent {
 
         if (animated) {
             this.anim = tween(this.node)
-                .to(0.2, { scale: Vec3.ZERO }, { easing: 'sineIn' })
+                .to(0.15, { scale: Vec3.ZERO }, { easing: 'sineIn' })
                 .start()
         } else {
             this.node.scale = Vec3.ZERO

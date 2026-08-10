@@ -5,12 +5,13 @@ import { Level } from "./Level"
 import { PlayerStorage } from "./PlayerStorage"
 import { Locale } from "./Common"
 
+const MaxWordLen = 25
 const sizesRange = [
     { from: 0, to: 2, wordLength: [4] },
     { from: 2, to: 9, wordLength: [5, 8] },
     { from: 9, to: 15, wordLength: [7, 9] },
     { from: 15, to: 20, wordLength: [9, 14] },
-    { from: 20, to: -1, wordLength: [9, 25] },
+    { from: 20, to: -1, wordLength: [13, MaxWordLen] },
 ]
 
 let wordsByLen: string[][]
@@ -22,13 +23,13 @@ async function checkWords(locale: string) {
         const text = (await loadFile<TextAsset>(`words_all_${locale}`, bundle)).text
 
         wordsByLen = []
+        for (let i = 0; i <= MaxWordLen; i++)
+            wordsByLen.push([])
+
         for (const word of text.split('\n')) {
             const len = word.length
             if (len == 0) // the last one
                 continue
-
-            while (wordsByLen.length <= len)
-                wordsByLen.push([])
             wordsByLen[len].push(word)
         }
 
@@ -42,21 +43,24 @@ export function isWordExist(word: string) {
 
 function nextWord(index: number) {
     const range = sizesRange.find(r => r.from <= index && (index < r.to || r.to == -1))
+    const minS = range.wordLength[0], maxS = range.wordLength[range.wordLength.length - 1]
     const scoreToLen = {}
 
     const lenToWordIndex = PlayerStorage.lenToWordIndex.value
-    for (const s of range.wordLength)
-        scoreToLen[s] = (lenToWordIndex[s] ?? 0) / wordsByLen[s].length
+    for (let s = minS; s <= maxS; s++) {
+        const count = wordsByLen[s].length
+        scoreToLen[s] = count == 0 ? undefined : (lenToWordIndex[s] ?? 0) / count
+    }
 
     const prevLevel = PlayerStorage.prevLevel.value
     const prevWordLen = prevLevel?.word.length ?? -1
     if (scoreToLen[prevWordLen] != undefined)
         scoreToLen[prevWordLen]++
 
-    let bestSize = range.wordLength[0]
-    let bestScore = scoreToLen[bestSize]
-    for (const s of range.wordLength) {
-        if (bestScore > scoreToLen[s]) {
+    let bestSize: number
+    let bestScore: number
+    for (let s = minS; s <= maxS; s++) {
+        if (bestScore == undefined || (scoreToLen[s] != undefined && bestScore > scoreToLen[s])) {
             bestScore = scoreToLen[s]
             bestSize = s
         }
@@ -97,7 +101,7 @@ function nextScheme(height: number, width: number, index: number, wordLen: numbe
         const prevLevel = PlayerStorage.prevLevel?.value,
             pi = prevLevel ? Math.trunc(prevLevel.scheme[0] / prevLevel.width) : -1,
             pj = prevLevel ? prevLevel.scheme[0] % prevLevel.width : -1
-        while (true) {
+        while (true) { // TODO optimization!
             const i = rand.rangeInt(0, height), j = rand.rangeInt(0, width)
             if (pi == i && pj == j)
                 continue
