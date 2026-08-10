@@ -141,6 +141,7 @@ export class GridInput extends PipelineComponent {
 
     private selectCell(cell: GridCell) {
         this.stopCellTweens(cell)
+        cell.pressed = true
         const scale = cell.defaultScale.clone().multiplyScalar(SelectScale)
         tween(cell.node)
             .to(SelectDuration, { scale }, { easing: 'backOut' })
@@ -152,18 +153,20 @@ export class GridInput extends PipelineComponent {
 
     private deselectCell(cell: GridCell) {
         this.stopCellTweens(cell)
+        cell.pressed = false
         tween(cell.node)
             .to(SelectDuration, { scale: cell.defaultScale }, { easing: 'sineOut' })
             .start()
         tween(cell.background)
-            .to(SelectDuration, { color: cell.defaultColor })
+            .to(SelectDuration, { color: cell.idleColor })
             .start()
     }
 
     private resetCell(cell: GridCell) {
         this.stopCellTweens(cell)
+        cell.pressed = false
         cell.node.scale = cell.defaultScale
-        cell.background.color = cell.defaultColor
+        cell.background.color = cell.idleColor
     }
 
     private clearPath(animated: boolean) {
@@ -218,7 +221,7 @@ export class GridInput extends PipelineComponent {
                 .parallel(
                     tween(cell.background)
                         .to(0.1, { color: ColorWrong })
-                        .to(0.15, { color: cell.defaultColor }),
+                        .to(0.15, { color: cell.idleColor }),
                     tween(cell.node)
                         .to(0.05, { position: new Vec3(pos.x - 8, pos.y, pos.z) })
                         .to(0.05, { position: new Vec3(pos.x + 8, pos.y, pos.z) })

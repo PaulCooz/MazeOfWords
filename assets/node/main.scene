@@ -1271,7 +1271,7 @@
     "_fontSize": 60,
     "_fontFamily": "Arial",
     "_lineHeight": 60,
-    "_overflow": 3,
+    "_overflow": 2,
     "_enableWrapText": false,
     "_font": {
       "__uuid__": "5bcc2211-35ca-4ac0-8fad-713b7ae20c81",
@@ -2495,6 +2495,9 @@
     "__prefab": null,
     "button": {
       "__id__": 64
+    },
+    "grid": {
+      "__id__": 32
     },
     "coinIcon": {
       "__id__": 23

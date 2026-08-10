@@ -33,6 +33,10 @@ export class Grid extends PipelineComponent {
         this.resizeCells()
     }
 
+    getWordCell(wordIndex: number) {
+        return this.cells[this.level.wordI2gridI(wordIndex)]
+    }
+
     private clearCells() {
         this.layout.node.destroyAllChildren()
         this.cells.length = 0
@@ -43,7 +47,7 @@ export class Grid extends PipelineComponent {
             for (let j = 0; j < this.level.width; j++) {
                 const item = instantiate(this.cellPrefab).getComponent(GridCell)
                 item.node.parent = this.layout.node
-                item.setup(this.level.charAt(i, j), i, j)
+                item.setup(i, j, this.level.letterAt(i, j))
                 this.cells.push(item)
             }
         }

@@ -125,7 +125,7 @@ export async function createLevel(locale: Locale, index: number) {
             word: undefined,
             height: undefined, width: undefined,
             scheme: undefined,
-            bonuses: [], openLetters: []
+            bonuses: [], openLetterIndexes: []
         }
 
         currLevel.word = nextWord(index)

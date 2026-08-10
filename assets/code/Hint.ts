@@ -1,22 +1,92 @@
-import { _decorator, Button, Component, Node, Sprite, UITransform } from 'cc';
-import { PipelineComponent } from './PipelineComponent';
-const { ccclass, property } = _decorator;
+import { _decorator, Button, instantiate, Sprite, tween, UITransform, Vec3, Widget } from 'cc'
+import { PipelineComponent } from './PipelineComponent'
+import { Grid } from './Grid'
+import { Level } from './Level'
+import { GridCell } from './GridCell'
+import { PlayerStorage } from './PlayerStorage'
+import { HintCost, OpenLetterEvent } from './Common'
+import { toPromise } from './self contained/Utils'
+const { ccclass, property } = _decorator
 
 @ccclass('Hint')
 export class Hint extends PipelineComponent {
     @property(Button)
     button: Button
+    @property(Grid)
+    grid: Grid
 
     @property(Sprite)
     coinIcon: Sprite
     @property(UITransform)
     topUI: UITransform
 
+    private level: Level
+    private busy: boolean
+
     awake() {
         this.button.node.on(Button.EventType.CLICK, this.onClick, this)
     }
 
-    private onClick() {
+    levelStart(level: Level) {
+        this.level = level
+        this.busy = false
+        this.button.interactable = true
 
+        this.restoreOpenedLetters()
+    }
+
+    private restoreOpenedLetters() {
+        for (const wordIndex of this.level.openLetterIndexes) {
+            const cell = this.grid.getWordCell(wordIndex)
+            cell.setHinted(this.level.directionNextTo(wordIndex))
+        }
+    }
+
+    levelFinish() {
+        this.button.interactable = false
+    }
+
+    private async onClick() {
+        if (this.busy)
+            return
+        const wordIndex = this.level.nextClosedWordI()
+        if (wordIndex == -1)
+            return
+
+        this.busy = true
+
+        if (PlayerStorage.coins.value < HintCost) {
+            await this.showNoCoinsDialog()
+            this.busy = false
+            return
+        }
+
+        const cell = this.grid.getWordCell(wordIndex)
+        await this.flyCoinTo(cell)
+
+        cell.setHinted(this.level.directionNextTo(wordIndex))
+        this.node.dispatchEvent(new OpenLetterEvent(wordIndex))
+
+        this.busy = false
+    }
+
+    private showNoCoinsDialog(): Promise<boolean> {
+        return undefined // TODO
+    }
+
+    private flyCoinTo(cell: GridCell) {
+        const coin = instantiate(this.coinIcon.node)
+
+        coin.getComponent(Widget).enabled = false
+        coin.setParent(this.topUI.node, true)
+        coin.worldPosition = this.coinIcon.node.worldPosition
+        const dur = Vec3.distance(coin.worldPosition, cell.node.worldPosition) / 2500.0
+
+        return toPromise(
+            tween(coin)
+                .to(dur, { worldPosition: cell.node.worldPosition })
+                .to(0.2, { scale: Vec3.ZERO }, { easing: 'backIn' })
+                .destroySelf()
+        )
     }
 }

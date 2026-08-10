@@ -2,8 +2,8 @@ import { _decorator, Component } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { createLevel } from './LevelGenerator'
 import { PlayerStorage } from './PlayerStorage'
-import { clearAllStorage } from './self contained/Storage'
-import { LevelChangeEvent, LevelCompleteEvent, Locale } from './Common'
+import { HintCost, LevelChangeEvent, LevelCompleteEvent, Locale, OpenLetterEvent } from './Common'
+import { Level } from './Level'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')
@@ -11,6 +11,7 @@ export class GameManager extends Component {
     @property([PipelineComponent])
     pipeline: PipelineComponent[] = []
 
+    private level: Level
     private locale: Locale = "ru"
 
     async onLoad() {
@@ -18,6 +19,7 @@ export class GameManager extends Component {
 
         this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
         this.node.on(LevelChangeEvent.Name, this.levelNext, this)
+        this.node.on(OpenLetterEvent.Name, this.openLetter, this)
 
         for (const p of this.pipeline) {
             p.awake?.()
@@ -27,9 +29,20 @@ export class GameManager extends Component {
     }
 
     private async startLevel(index: number) {
-        const level = await createLevel(this.locale, index)
+        this.level = await createLevel(this.locale, index)
         for (const p of this.pipeline) {
-            p.levelStart?.(level)
+            p.levelStart?.(this.level)
+        }
+    }
+
+    private openLetter(event: OpenLetterEvent) {
+        PlayerStorage.coins.value -= HintCost
+
+        this.level.openLetterIndexes.push(event.wordIndex)
+        if (this.level.allLettersOpened) {
+            this.levelComplete()
+        } else {
+            this.level.saveAsCurr()
         }
     }
 
