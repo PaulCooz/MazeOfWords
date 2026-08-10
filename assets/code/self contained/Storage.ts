@@ -31,6 +31,8 @@ export function clearAllStorage() {
 
 export class StorageValue<T> { // TODO add onChanged event
     private key: string
+    private defaultValue: T
+
     private _value: T
 
     get value(): T {
@@ -46,7 +48,12 @@ export class StorageValue<T> { // TODO add onChanged event
 
     constructor(key: string, defaultValue?: T) {
         this.key = key
-        this._value = get(key, defaultValue)
+        this.defaultValue = defaultValue
+        this.refresh()
+    }
+
+    refresh() {
+        this._value = get(this.key, this.defaultValue)
     }
 
     save() {

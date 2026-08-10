@@ -9,8 +9,8 @@ const sizesRange = [
     { from: 0, to: 2, wordLength: [4] },
     { from: 2, to: 9, wordLength: [5, 8] },
     { from: 9, to: 15, wordLength: [7, 9] },
-    { from: 15, to: 25, wordLength: [9, 14] },
-    { from: 25, to: -1, wordLength: [9, 25] },
+    { from: 15, to: 20, wordLength: [9, 14] },
+    { from: 20, to: -1, wordLength: [9, 25] },
 ]
 
 let wordsByLen: string[][]

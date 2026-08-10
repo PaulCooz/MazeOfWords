@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "gridCell",
+    "_name": "GridCell",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_native": "",
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "gridCell",
+    "_name": "GridCell",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -93,7 +93,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0,
+      "y": 1,
       "z": 0
     },
     "_lrot": {
@@ -134,7 +134,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 96,
-      "height": 96
+      "height": 98
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -172,7 +172,7 @@
     "_string": "T",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 96,
+    "_actualFontSize": 98,
     "_fontSize": 120,
     "_fontFamily": "Arial",
     "_lineHeight": 120,
@@ -234,7 +234,7 @@
     "_target": null,
     "_left": 2,
     "_right": 2,
-    "_top": 2,
+    "_top": 0,
     "_bottom": 2,
     "_horizontalCenter": 0,
     "_verticalCenter": 0,
@@ -318,7 +318,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
+      "__uuid__": "05159c97-9943-4d0e-ab07-6df920947508@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 1,

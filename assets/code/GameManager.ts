@@ -14,7 +14,7 @@ export class GameManager extends Component {
     private locale: Locale = "ru"
 
     async onLoad() {
-        clearAllStorage()
+        PlayerStorage.clearAll()
 
         this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
         this.node.on(LevelChangeEvent.Name, this.levelNext, this)
