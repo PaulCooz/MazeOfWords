@@ -12,13 +12,18 @@ export class LevelLabel extends PipelineComponent {
 
     private level: Level
 
-    public levelStart(level: Level): void {
-        this.level = level
-
+    awake() {
         PlayerStorage.lang.onChange.append(this.updateLabel, this)
     }
 
+    public levelStart(level: Level): void {
+        this.level = level
+        this.updateLabel()
+    }
+
     private updateLabel() {
+        if (!this.level)
+            return
         this.label.string = `${localize("Level")}: ${this.level.index + 1}`
     }
 }

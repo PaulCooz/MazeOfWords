@@ -41,18 +41,18 @@ export function isWordExist(word: string) {
     return word.length > 3 ? (wordsByLen[word.length]?.includes(word) ?? false) : false
 }
 
-function nextWord(index: number) {
+function nextWord(locale: Locale, index: number) {
     const range = sizesRange.find(r => r.from <= index && (index < r.to || r.to == -1))
     const minS = range.wordLength[0], maxS = range.wordLength[range.wordLength.length - 1]
     const scoreToLen = {}
 
-    const lenToWordIndex = PlayerStorage.lenToWordIndex.value
+    const lenToWordIndex = PlayerStorage.getLenToWordIndex(locale)
     for (let s = minS; s <= maxS; s++) {
         const count = wordsByLen[s].length
         scoreToLen[s] = count == 0 ? undefined : (lenToWordIndex[s] ?? 0) / count
     }
 
-    const prevLevel = PlayerStorage.prevLevel.value
+    const prevLevel = PlayerStorage.getPrevLevel(locale)
     const prevWordLen = prevLevel?.word.length ?? -1
     if (scoreToLen[prevWordLen] != undefined)
         scoreToLen[prevWordLen]++
@@ -67,13 +67,10 @@ function nextWord(index: number) {
     }
 
     const wordIndex = lenToWordIndex[bestSize] ?? 0
-    lenToWordIndex[bestSize] = wordIndex + 1
-    PlayerStorage.lenToWordIndex.save()
-
     return wordsByLen[bestSize][wordIndex % wordsByLen.length]
 }
 
-function nextScheme(height: number, width: number, index: number, wordLen: number) {
+function nextScheme(locale: Locale, height: number, width: number, index: number) {
     const rand = new Rand(index)
     const path = [], used = {}
     const stopWord = "found"
@@ -98,7 +95,7 @@ function nextScheme(height: number, width: number, index: number, wordLen: numbe
     }
 
     try {
-        const prevLevel = PlayerStorage.prevLevel?.value,
+        const prevLevel = PlayerStorage.getPrevLevel(locale),
             pi = prevLevel ? Math.trunc(prevLevel.scheme[0] / prevLevel.width) : -1,
             pj = prevLevel ? prevLevel.scheme[0] % prevLevel.width : -1
         while (true) { // TODO optimization!
@@ -118,8 +115,8 @@ function nextScheme(height: number, width: number, index: number, wordLen: numbe
 export async function createLevel(locale: Locale, index: number) {
     await checkWords(locale)
 
-    let currLevel = PlayerStorage.currLevel.value
-    if (currLevel == undefined || currLevel.index != index || currLevel.locale != locale) {
+    let currLevel = PlayerStorage.getCurrLevel(locale)
+    if (currLevel == undefined || currLevel.index != index) {
         currLevel = {
             index: index, locale: locale,
             word: undefined,
@@ -128,16 +125,16 @@ export async function createLevel(locale: Locale, index: number) {
             bonuses: [], openLetterIndexes: []
         }
 
-        currLevel.word = nextWord(index)
+        currLevel.word = nextWord(locale, index)
 
         const wordLen = currLevel.word.length
         currLevel.height = currLevel.width = Math.round(Math.sqrt(wordLen))
         if (currLevel.height * currLevel.width < wordLen)
             currLevel.height++
 
-        currLevel.scheme = nextScheme(currLevel.height, currLevel.width, index, currLevel.word.length)
+        currLevel.scheme = nextScheme(locale, currLevel.height, currLevel.width, index)
 
-        PlayerStorage.currLevel.value = currLevel
+        PlayerStorage.setCurrLevel(locale, currLevel)
     }
     return new Level(currLevel)
 }

@@ -1,4 +1,4 @@
-import { Direction } from "./Common"
+import { Direction, Locale } from "./Common"
 import { PlayerStorage } from "./PlayerStorage"
 
 export interface LevelData {
@@ -16,7 +16,7 @@ export interface LevelData {
 
 export class Level implements LevelData {
     index: number
-    locale: string
+    locale: Locale
 
     word: string
     height: number
@@ -61,7 +61,7 @@ export class Level implements LevelData {
     }
 
     saveAsCurr() {
-        PlayerStorage.currLevel.value = {
+        PlayerStorage.setCurrLevel(this.locale, {
             index: this.index,
             locale: this.locale,
             word: this.word,
@@ -70,6 +70,6 @@ export class Level implements LevelData {
             scheme: this.scheme,
             bonuses: this.bonuses,
             openLetterIndexes: this.openLetterIndexes,
-        }
+        })
     }
 }

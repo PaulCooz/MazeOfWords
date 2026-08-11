@@ -41,7 +41,7 @@ flowchart LR
 
 - **GameManager** — boots the game, listens for level events, advances progress, and calls pipeline hooks in order. It should stay thin: no feature-specific UI logic
 - **Pipeline features** — optional `awake` / `levelStart` / `levelFinish` on `PipelineComponent`. New systems (coins, hints, SDK UI) should plug in here and register on the scene pipeline list
-- **Level generation** — pure-ish factory: pick a word for the locale/index, build a path scheme on a grid, cache the current level in player storage so reloads resume mid-progress
+- **Level generation** — pure-ish factory: pick a word for the locale/index, build a path scheme on a grid, cache the current level **per locale** in player storage so language switches restore open letters / bonuses
 - **Events** — features announce outcomes (`level-complete`, `level-change`, …) via bubbling Cocos events; the manager translates them into pipeline phases
 - **Persistence** — typed `StorageValue` keys for progress. Safe under empty/corrupt localStorage so editor script loading never crashes
 - _**self contained**_ — helpers that **must not depend on game-specific files**
@@ -49,9 +49,10 @@ flowchart LR
 ### Runtime loop
 
 1. Load dictionaries for the active locale from the `bundle` asset pack
-2. Create or restore the current level, then `levelStart` across the pipeline (rebuild grid, reset input)
+2. Create or restore the current level for that locale, then `levelStart` across the pipeline (rebuild grid, reset input)
 3. Player traces adjacent cells; submit evaluates `correct`/`bonus`/`wrong` word with short feedback tweens
-4. `correct` word → `levelFinish` (lock play, reveal next). Next button → bump index, clear current cache, start again
+4. `correct` word → `levelFinish` (lock play, reveal next). Next button → bump index, clear current cache for this locale, start again
+5. Language change → keep in-progress levels per locale (empty caches may be dropped), reload the level for the new language
 
 ### Project layout
 
@@ -65,9 +66,6 @@ flowchart LR
 
 ## TODO
 
-- add coins
-- add hint
-- add language change
 - add Yandex Games SDK
 
 ## Agent notes
