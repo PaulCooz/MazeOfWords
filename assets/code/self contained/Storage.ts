@@ -1,4 +1,5 @@
 import { sys } from "cc"
+import { Delegate } from "./Delegate"
 
 function get(key: string, defaultValue?: any) {
     try {
@@ -34,7 +35,6 @@ export class StorageValue<T> { // TODO add onChanged event
     private defaultValue: T
 
     private _value: T
-
     get value(): T {
         return this._value
     }
@@ -46,17 +46,27 @@ export class StorageValue<T> { // TODO add onChanged event
         this.save()
     }
 
+    private _onChange: Delegate<T>
+    get onChange() {
+        if (!this._onChange)
+            this._onChange = new Delegate<T>()
+        return this._onChange
+    }
+
     constructor(key: string, defaultValue?: T) {
         this.key = key
         this.defaultValue = defaultValue
-        this.refresh()
+        this.reset()
     }
 
-    refresh() {
-        this._value = get(this.key, this.defaultValue)
+    reset() {
+        this.value = get(this.key, this.defaultValue)
     }
 
     save() {
         set(this.key, this._value)
+
+        if (this._onChange)
+            this._onChange.emit(this._value)
     }
 }

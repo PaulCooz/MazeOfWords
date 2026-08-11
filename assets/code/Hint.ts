@@ -4,7 +4,7 @@ import { Grid } from './Grid'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
 import { PlayerStorage } from './PlayerStorage'
-import { HintCost, OpenLetterEvent } from './Common'
+import { HintCost, OpenedLetterEvent, OpenLetterEvent } from './Common'
 import { toPromise } from './self contained/Utils'
 const { ccclass, property } = _decorator
 
@@ -62,10 +62,11 @@ export class Hint extends PipelineComponent {
         }
 
         const cell = this.grid.getWordCell(wordIndex)
+        this.node.dispatchEvent(new OpenLetterEvent(wordIndex))
         await this.flyCoinTo(cell)
 
         cell.setHinted(this.level.directionNextTo(wordIndex))
-        this.node.dispatchEvent(new OpenLetterEvent(wordIndex))
+        this.node.dispatchEvent(new OpenedLetterEvent())
 
         this.busy = false
     }

@@ -15,7 +15,7 @@ export class PlayerStorage {
 
         for (const field of Object.values(PlayerStorage)) {
             if (field instanceof StorageValue) {
-                field.refresh()
+                field.reset()
             }
         }
     }

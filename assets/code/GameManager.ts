@@ -2,7 +2,7 @@ import { _decorator, Component } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { createLevel } from './LevelGenerator'
 import { PlayerStorage } from './PlayerStorage'
-import { HintCost, LevelChangeEvent, LevelCompleteEvent, Locale, OpenLetterEvent } from './Common'
+import { HintCost, LevelChangeEvent, LevelCompleteEvent, Locale, OpenedLetterEvent, OpenLetterEvent } from './Common'
 import { Level } from './Level'
 const { ccclass, property } = _decorator
 
@@ -20,6 +20,7 @@ export class GameManager extends Component {
         this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
         this.node.on(LevelChangeEvent.Name, this.levelNext, this)
         this.node.on(OpenLetterEvent.Name, this.openLetter, this)
+        this.node.on(OpenedLetterEvent.Name, this.openedLetter, this)
 
         for (const p of this.pipeline) {
             p.awake?.()
@@ -37,8 +38,9 @@ export class GameManager extends Component {
 
     private openLetter(event: OpenLetterEvent) {
         PlayerStorage.coins.value -= HintCost
-
         this.level.openLetterIndexes.push(event.wordIndex)
+    }
+    private openedLetter() {
         if (this.level.allLettersOpened) {
             this.levelComplete()
         } else {

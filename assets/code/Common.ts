@@ -20,6 +20,11 @@ export class OpenLetterEvent extends Event {
         this.wordIndex = wordIndex
     }
 }
+export class OpenedLetterEvent extends Event {
+    static readonly Name = "opened-letter"
+    constructor() { super(OpenedLetterEvent.Name, true) }
+}
+
 export const HintCost = 1 // TODO create config
 
 export type Locale = "en" | "ru"

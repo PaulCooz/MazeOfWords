@@ -1,4 +1,10 @@
-import { Label, math, Tween, tween } from "cc"
+import { Color, Label, math, Tween, tween } from "cc"
+
+export function withA(alpha: number, color: Color) {
+    const n = color.clone()
+    n.a = alpha
+    return n
+}
 
 export function labelCounterTween(label: Label, value: number, duration: number = 0.2) {
     return tween(label).to(duration, {
