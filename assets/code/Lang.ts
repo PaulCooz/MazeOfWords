@@ -34,6 +34,10 @@ const Translations: { [key in string]: { [key in Locale]: string } } = {
         ["ru"]: "Уровень",
         ["en"]: "Level",
     },
+    ["Loading"]: {
+        ["ru"]: "Загрузка...",
+        ["en"]: "Loading...",
+    },
     ["ru"]: { ["ru"]: "Русский", ["en"]: "Русский" },
     ["en"]: { ["ru"]: "English", ["en"]: "English" },
 }

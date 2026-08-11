@@ -30,7 +30,7 @@ export class PopupManager extends Component {
             PopupManager._instance = undefined
     }
 
-    static show<TResult, T extends Popup<TResult>>(type: Constructor<T>, params?: object): T {
+    static show<TResult, T extends Popup<TResult>>(type: Constructor<T>, params?: Partial<T>): T {
         return PopupManager._instance.show(type, params)
     }
 
@@ -38,7 +38,7 @@ export class PopupManager extends Component {
         return PopupManager._instance.get(type)
     }
 
-    private show<TResult, T extends Popup<TResult>>(type: Constructor<T>, params?: object): T {
+    private show<TResult, T extends Popup<TResult>>(type: Constructor<T>, params?: Partial<T>): T {
         const existing = this.get(type)
         if (existing)
             return existing

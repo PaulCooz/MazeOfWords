@@ -24,6 +24,8 @@ export class GridCell extends Component {
     readonly defaultScale = Vec3.ONE
 
     private state: State
+    private hintedDir: Direction
+    private inputDir: Direction
 
     i: number
     j: number
@@ -48,6 +50,7 @@ export class GridCell extends Component {
 
     public setup(i: number, j: number, letter: string) {
         this.state = State.Idle
+        this.refreshDirection()
 
         this.empty = letter == undefined
         if (this.empty) {
@@ -62,12 +65,26 @@ export class GridCell extends Component {
         this.j = j
     }
 
-    public setHinted(direction: Direction | null) {
+    public setHinted(direction: Direction) {
         this.hinted = true
+        this.hintedDir = direction
+        this.refreshDirection()
 
-        if (direction != null)
-            this.hintedDirection[direction].node.active = true
         if (!this.pressed)
             this.background.color = this.idleColor
+    }
+
+    public setInputDirection(direction: Direction) {
+        this.inputDir = direction
+        this.refreshDirection()
+    }
+
+    private refreshDirection() {
+        for (const sprite of this.hintedDirection)
+            sprite.node.active = false
+
+        const direction = this.inputDir ?? (this.hinted ? this.hintedDir : undefined)
+        if (direction != null)
+            this.hintedDirection[direction].node.active = true
     }
 }

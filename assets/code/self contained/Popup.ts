@@ -26,7 +26,7 @@ export abstract class Popup<TResult = void> extends Component {
     onSetup?(): void
     onClose?(): void
 
-    setup(params?: object) {
+    setup(params?: Partial<Popup<TResult>>) {
         if (params)
             Object.assign(this, params)
 

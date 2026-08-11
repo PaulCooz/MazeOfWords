@@ -13,8 +13,8 @@ alwaysApply: true
 
 ## Edit with care
 
-- `assets/node/*.scene` / `*.prefab` — only when wiring components or layout; keep diffs minimal
-- `*.meta` — create/commit with new assets; never regenerate UUIDs for existing scripts still referenced in scenes
+- `*.scene` / `*.prefab` — only when wiring components or layout; keep diffs minimal
+- `*.meta` — do **not** create or edit; Creator generates these on import
 
 ## Do not edit / do not commit
 

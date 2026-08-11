@@ -377,7 +377,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 550,
+      "width": 600,
       "height": 64
     },
     "_anchorPoint": {
@@ -3607,7 +3607,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 650,
+      "width": 700,
       "height": 220
     },
     "_anchorPoint": {
@@ -3722,7 +3722,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 650,
+      "width": 700,
       "height": 375
     },
     "_anchorPoint": {

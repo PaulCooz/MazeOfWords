@@ -28,6 +28,7 @@ export class OpenedLetterEvent extends Event {
 export const HintCost = 1 // TODO create config
 
 export type Locale = "en" | "ru"
+export const Locales = ["en", "ru"]
 
 export enum Direction {
     Right = 0,

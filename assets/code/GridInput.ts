@@ -5,7 +5,7 @@ import { Level } from './Level'
 import { GridCell } from './GridCell'
 import { isWordExist } from './LevelGenerator'
 import { toPromise } from './self contained/Utils'
-import { LevelCompleteEvent } from './Common'
+import { Direction, LevelCompleteEvent } from './Common'
 const { ccclass, property } = _decorator
 
 const SelectScale = 0.95
@@ -82,7 +82,10 @@ export class GridInput extends PipelineComponent {
             return
         if (cell == prev) {
             this.updateLabel()
-            this.deselectCell(this.path.pop())
+            const removed = this.path.pop()
+            prev.setInputDirection(null)
+            removed.setInputDirection(null)
+            this.deselectCell(removed)
             return
         }
 
@@ -90,6 +93,9 @@ export class GridInput extends PipelineComponent {
             return
         if (this.path.length > 0 && !this.isAdjacent(last, cell))
             return
+
+        if (last)
+            last.setInputDirection(this.directionBetween(last, cell))
 
         this.path.push(cell)
         this.updateLabel()
@@ -104,20 +110,26 @@ export class GridInput extends PipelineComponent {
         if (this.path.length == 0)
             return
 
+        const cells = [...this.path]
         const word = this.word
         const result = this.evaluateWord(word)
 
         this.busy = true
-        await this.playResult(result)
-        this.clearPath(result != 'wrong')
-
-        if (result == 'bonus' && !this.level.bonuses.includes(word)) {
-            this.level.bonuses.push(word)
-            this.level.saveAsCurr()
-        }
+        await this.playResult(result, cells)
 
         if (result == 'correct') {
+            for (const cell of cells)
+                cell.pressed = false
+            this.path.length = 0
+            this.updateLabel()
             this.node.dispatchEvent(new LevelCompleteEvent())
+        } else {
+            this.clearPath(result != 'wrong')
+
+            if (result == 'bonus' && !this.level.bonuses.includes(word)) {
+                this.level.bonuses.push(word)
+                this.level.saveAsCurr()
+            }
         }
 
         this.busy = false
@@ -133,6 +145,20 @@ export class GridInput extends PipelineComponent {
 
     private isAdjacent(a: GridCell, b: GridCell) {
         return Math.abs(a.i - b.i) + Math.abs(a.j - b.j) == 1
+    }
+
+    private directionBetween(a: GridCell, b: GridCell): Direction {
+        if (a.j > b.j) return Direction.Right
+        if (a.j < b.j) return Direction.Left
+        if (a.i > b.i) return Direction.Up
+        if (a.i < b.i) return Direction.Down
+    }
+
+    private applyPathDirections(cells: GridCell[]) {
+        for (let i = 0; i < cells.length; i++) {
+            const d = i + 1 < cells.length ? this.directionBetween(cells[i], cells[i + 1]) : undefined
+            cells[i].setInputDirection(d)
+        }
     }
 
     private updateLabel() {
@@ -154,6 +180,7 @@ export class GridInput extends PipelineComponent {
     private deselectCell(cell: GridCell) {
         this.stopCellTweens(cell)
         cell.pressed = false
+        cell.setInputDirection(null)
         tween(cell.node)
             .to(SelectDuration, { scale: cell.defaultScale }, { easing: 'sineOut' })
             .start()
@@ -165,6 +192,7 @@ export class GridInput extends PipelineComponent {
     private resetCell(cell: GridCell) {
         this.stopCellTweens(cell)
         cell.pressed = false
+        cell.setInputDirection(null)
         cell.node.scale = cell.defaultScale
         cell.background.color = cell.idleColor
     }
@@ -185,10 +213,10 @@ export class GridInput extends PipelineComponent {
         Tween.stopAllByTarget(cell.background)
     }
 
-    private playResult(result: WordResult) {
-        const cells = [...this.path]
+    private playResult(result: WordResult, cells: GridCell[]) {
         switch (result) {
             case 'correct':
+                this.applyPathDirections(cells)
                 return this.animateAccept(cells, ColorCorrect)
             case 'bonus':
                 return this.animateAccept(cells, ColorBonus)
