@@ -6,6 +6,12 @@ export function withA(alpha: number, color: Color) {
     return n
 }
 
+export function withY<T extends { clone: () => T, y: number }>(y: number, v: T): T {
+    const n = v.clone()
+    n.y = y
+    return n
+}
+
 export function labelCounterTween(label: Label, value: number, duration: number = 0.2) {
     return tween(label).to(duration, {
         string: {
