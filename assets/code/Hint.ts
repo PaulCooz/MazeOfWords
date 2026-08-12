@@ -4,7 +4,8 @@ import { Grid } from './Grid'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
 import { PlayerStorage } from './PlayerStorage'
-import { HintCost, OpenedLetterEvent, OpenLetterEvent } from './Common'
+import { OpenedLetterEvent, OpenLetterEvent } from './Common'
+import { Config } from './Config'
 import { toPromise } from './self contained/Utils'
 const { ccclass, property } = _decorator
 
@@ -55,7 +56,7 @@ export class Hint extends PipelineComponent {
 
         this.busy = true
 
-        if (PlayerStorage.coins.value < HintCost) {
+        if (PlayerStorage.coins.value < Config.hintCost) {
             await this.showNoCoinsDialog()
             this.busy = false
             return

@@ -36,6 +36,7 @@ export class SettingsPopup extends Popup {
     }
 
     public switchLang() {
+        PlayerStorage.langChosen.value = true
         switch (PlayerStorage.lang.value) {
             case "en":
                 PlayerStorage.lang.value = "ru"

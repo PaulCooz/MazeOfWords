@@ -1,6 +1,7 @@
 import { _decorator } from 'cc'
 import { RevealButton } from './RevealButton'
 import { LevelChangeEvent } from './Common'
+import { Adv } from './Adv'
 const { ccclass } = _decorator
 
 @ccclass('NextLevel')
@@ -12,5 +13,6 @@ export class NextLevel extends RevealButton {
     protected onClick() {
         this.hide(true)
         this.node.dispatchEvent(new LevelChangeEvent())
+        Adv.tryShowFullscreen()
     }
 }

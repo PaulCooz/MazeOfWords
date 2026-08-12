@@ -30,9 +30,25 @@ export function clearAllStorage() {
     globalThis.changedLocalStorage = true
 }
 
-export class StorageValue<T> { // TODO add onChanged event
+export function exportAllStorage(): object {
+    const data = {}
+    for (let i = 0; i < sys.localStorage.length; i++) {
+        const key = sys.localStorage.key(i)
+        const value = get(key)
+        if (value != undefined)
+            data[key] = value
+    }
+    return data
+}
+
+export function importAllStorage(data: object) {
+    for (const key of Object.keys(data))
+        set(key, data[key])
+}
+
+export class StorageValue<T> {
     private key: string
-    private defaultValue: T
+    private defaultValue: T | (() => T)
 
     private _value: T
     get value(): T {
@@ -53,14 +69,15 @@ export class StorageValue<T> { // TODO add onChanged event
         return this._onChange
     }
 
-    constructor(key: string, defaultValue?: T) {
+    constructor(key: string, defaultValue?: T | (() => T)) {
         this.key = key
         this.defaultValue = defaultValue
         this.reset()
     }
 
     reset() {
-        this.value = get(this.key, this.defaultValue)
+        const d = this.defaultValue
+        this.value = get(this.key, typeof d == "function" ? (d as () => T)() : d)
     }
 
     save() {

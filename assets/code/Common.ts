@@ -25,8 +25,6 @@ export class OpenedLetterEvent extends Event {
     constructor() { super(OpenedLetterEvent.Name, true) }
 }
 
-export const HintCost = 1 // TODO create config
-
 export type Locale = "en" | "ru"
 export const Locales = ["en", "ru"]
 

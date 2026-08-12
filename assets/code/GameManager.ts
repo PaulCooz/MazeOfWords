@@ -2,24 +2,43 @@ import { _decorator, Component } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { createLevel } from './LevelGenerator'
 import { PlayerStorage } from './PlayerStorage'
-import { HintCost, LevelChangeEvent, LevelCompleteEvent, OpenedLetterEvent, OpenLetterEvent } from './Common'
+import { LevelChangeEvent, LevelCompleteEvent, Locale, OpenedLetterEvent, OpenLetterEvent } from './Common'
 import { Level } from './Level'
+import { Config } from './Config'
+import { CloudSave } from './CloudSave'
+import { initYandex, loadingReady, setGamePaused, yandexLang } from './self contained/Yandex'
+import { PopupManager } from './self contained/PopupManager'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')
 export class GameManager extends Component {
     @property([PipelineComponent])
     pipeline: PipelineComponent[] = []
+    @property(PopupManager)
+    popupManager: PopupManager
 
     private level: Level
+    private playing = false
 
     async onLoad() {
         PlayerStorage.clearAll() // for debug
+
+        this.popupManager.setup()
 
         this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
         this.node.on(LevelChangeEvent.Name, this.levelNext, this)
         this.node.on(OpenLetterEvent.Name, this.openLetter, this)
         this.node.on(OpenedLetterEvent.Name, this.openedLetter, this)
+        PopupManager.onPushPopup.append(this.checkPause, this)
+        PopupManager.onPopPopup.append(this.checkPause, this)
+
+        await initYandex()
+        await Promise.all([Config.load(), CloudSave.pull()])
+
+        if (!PlayerStorage.langChosen.value)
+            PlayerStorage.lang.value = yandexLang() as Locale
+
+        CloudSave.startPushLoop()
 
         PlayerStorage.lang.onChange.append(this.startLevel, this)
 
@@ -27,6 +46,7 @@ export class GameManager extends Component {
             p.awake?.()
         }
 
+        loadingReady()
         await this.startLevel()
     }
 
@@ -36,12 +56,16 @@ export class GameManager extends Component {
         for (const p of this.pipeline) {
             p.levelStart?.(this.level)
         }
+
+        this.playing = true
+        this.checkPause()
+
         if (this.level.allLettersOpened)
             this.levelComplete()
     }
 
     private openLetter(event: OpenLetterEvent) {
-        PlayerStorage.coins.value -= HintCost
+        PlayerStorage.coins.value -= Config.hintCost
         this.level.openLetterIndexes.push(event.wordIndex)
     }
     private openedLetter() {
@@ -61,6 +85,8 @@ export class GameManager extends Component {
         for (const p of this.pipeline) {
             p.levelFinish?.()
         }
+        this.playing = false
+        this.checkPause()
     }
 
     private async levelNext() {
@@ -70,5 +96,9 @@ export class GameManager extends Component {
         PlayerStorage.setCurrLevel(locale, undefined)
 
         await this.startLevel()
+    }
+
+    private checkPause() {
+        setGamePaused(!this.playing || !PopupManager.empty())
     }
 }

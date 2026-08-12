@@ -43,16 +43,18 @@ flowchart LR
 - **Pipeline features** — optional `awake` / `levelStart` / `levelFinish` on `PipelineComponent`. New systems (coins, hints, SDK UI) should plug in here and register on the scene pipeline list
 - **Level generation** — pure-ish factory: pick a word for the locale/index, build a path scheme on a grid, cache the current level **per locale** in player storage so language switches restore open letters / bonuses
 - **Events** — features announce outcomes (`level-complete`, `level-change`, …) via bubbling Cocos events; the manager translates them into pipeline phases
-- **Persistence** — typed `StorageValue` keys for progress. Safe under empty/corrupt localStorage so editor script loading never crashes
+- **Persistence** — typed `StorageValue` keys for progress. Safe under empty/corrupt localStorage so editor script loading never crashes. `CloudSave` mirrors localStorage to Yandex `player.setData` and pulls it back on boot
+- **Platform (Yandex Games)** — `index.ejs` connects the SDK and exposes `YG` globals; the self-contained `Yandex` wrapper waits for them (or installs an editor/preview mock), sends game ready + gameplay start/stop events, and serves ads. `Config` holds tunable constants, overridable from Remote Config. `Adv` shows fullscreen ads with a cooldown
 - _**self contained**_ — helpers that **must not depend on game-specific files**
 
 ### Runtime loop
 
-1. Load dictionaries for the active locale from the `bundle` asset pack
-2. Create or restore the current level for that locale, then `levelStart` across the pipeline (rebuild grid, reset input)
-3. Player traces adjacent cells; submit evaluates `correct`/`bonus`/`wrong` word with short feedback tweens
-4. `correct` word → `levelFinish` (lock play, reveal next). Next button → bump index, clear current cache for this locale, start again
-5. Language change → keep in-progress levels per locale (empty caches may be dropped), reload the level for the new language
+1. Init Yandex SDK (or mock), pull cloud saves and remote config; use the Yandex language until the player picks one in settings
+2. Load dictionaries for the active locale from the `bundle` asset pack
+3. Create or restore the current level for that locale, then `levelStart` across the pipeline (rebuild grid, reset input); report game ready
+4. Player traces adjacent cells; submit evaluates `correct`/`bonus`/`wrong` word with short feedback tweens
+5. `correct` word → `levelFinish` (lock play, reveal next). Next button → bump index, clear current cache for this locale, maybe show a fullscreen ad, start again
+6. Language change → keep in-progress levels per locale (empty caches may be dropped), reload the level for the new language
 
 ### Project layout
 
@@ -66,7 +68,8 @@ flowchart LR
 
 ## TODO
 
-- add Yandex Games SDK
+- rewarded ads (extra coins)
+- remove the debug `PlayerStorage.clearAll()` in `GameManager.onLoad` before release
 
 ## Agent notes
 

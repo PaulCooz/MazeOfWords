@@ -1,4 +1,5 @@
 import { Locale } from "./Common"
+import { Config } from "./Config"
 import { LevelData } from "./Level"
 import { clearAllStorage, StorageValue } from "./self contained/Storage"
 
@@ -16,8 +17,9 @@ export class PlayerStorage {
     static music = new StorageValue<number>("music", 0.5)
 
     static lang = new StorageValue<Locale>("lang", "en")
+    static langChosen = new StorageValue<boolean>("langChosen", false) // ignore yandex default if picked lang
 
-    static coins = new StorageValue<number>("coins", 10)
+    static coins = new StorageValue<number>("coins", () => Config.startCoins)
 
     static getCurrLevel(locale: Locale) {
         return this.currLevels.value[locale]
@@ -49,13 +51,16 @@ export class PlayerStorage {
         return map[locale]
     }
 
-    static clearAll() {
-        clearAllStorage()
-
+    static resetAll() {
         for (const field of Object.values(PlayerStorage)) {
             if (field instanceof StorageValue) {
                 field.reset()
             }
         }
+    }
+
+    static clearAll() {
+        clearAllStorage()
+        this.resetAll()
     }
 }

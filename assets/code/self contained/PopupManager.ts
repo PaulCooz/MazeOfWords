@@ -1,5 +1,6 @@
 import { _decorator, Component, Constructor, instantiate, Node, Prefab } from 'cc'
 import { Popup } from './Popup'
+import { Delegate } from './Delegate'
 const { ccclass, property } = _decorator
 
 @ccclass('PopupManager')
@@ -9,12 +10,15 @@ export class PopupManager extends Component {
     @property([Prefab])
     prefabs: Prefab[] = []
 
+    static readonly onPushPopup = new Delegate()
+    static readonly onPopPopup = new Delegate()
+
     private static _instance: PopupManager
 
     private prefabByType = new Map<Function, Prefab>()
     private openPopups: Popup[] = []
 
-    onLoad() {
+    public setup() { // call it manually!
         PopupManager._instance = this
 
         for (const prefab of this.prefabs) {
@@ -38,6 +42,10 @@ export class PopupManager extends Component {
         return PopupManager._instance.get(type)
     }
 
+    static empty() {
+        return PopupManager._instance.empty()
+    }
+
     private show<TResult, T extends Popup<TResult>>(type: Constructor<T>, params?: Partial<T>): T {
         const existing = this.get(type)
         if (existing)
@@ -52,10 +60,13 @@ export class PopupManager extends Component {
         node.setParent(this.root ?? this.node)
 
         this.openPopups.push(popup as Popup)
+        PopupManager.onPushPopup.emit()
         popup.onClosed.once(() => {
             const i = this.openPopups.indexOf(popup as Popup)
-            if (i >= 0)
+            if (i >= 0) {
                 this.openPopups.splice(i, 1)
+                PopupManager.onPopPopup.emit()
+            }
         })
 
         popup.setup(params)
@@ -70,5 +81,9 @@ export class PopupManager extends Component {
                 return popup as T
         }
         return null
+    }
+
+    private empty() {
+        return this.openPopups.length == 0
     }
 }

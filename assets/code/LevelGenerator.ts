@@ -4,15 +4,9 @@ import { loadBundle, loadFile } from "./self contained/Engine"
 import { Level } from "./Level"
 import { PlayerStorage } from "./PlayerStorage"
 import { Locale } from "./Common"
+import { Config } from "./Config"
 
 const MaxWordLen = 25
-const sizesRange = [
-    { from: 0, to: 2, wordLength: [4] },
-    { from: 2, to: 9, wordLength: [5, 8] },
-    { from: 9, to: 15, wordLength: [7, 9] },
-    { from: 15, to: 20, wordLength: [9, 14] },
-    { from: 20, to: -1, wordLength: [13, MaxWordLen] },
-]
 
 let wordsByLen: string[][]
 let loadedLocale: string
@@ -42,7 +36,7 @@ export function isWordExist(word: string) {
 }
 
 function nextWord(locale: Locale, index: number) {
-    const range = sizesRange.find(r => r.from <= index && (index < r.to || r.to == -1))
+    const range = Config.levelProgression.find(r => r.from <= index && (index < r.to || r.to == -1))
     const minS = range.wordLength[0], maxS = range.wordLength[range.wordLength.length - 1]
     const scoreToLen = {}
 

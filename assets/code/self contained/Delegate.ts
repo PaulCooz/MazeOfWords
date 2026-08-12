@@ -1,7 +1,7 @@
 type EventCallback<T> = (arg: T) => void
 type EventTarget = object
 
-export class Delegate<T> {
+export class Delegate<T = void> {
     private _callbacks: [EventCallback<T>, EventTarget, boolean][] = []
 
     append(callback: EventCallback<T>, target: EventTarget) {
