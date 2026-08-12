@@ -4,7 +4,7 @@ type EventTarget = object
 export class Delegate<T = void> {
     private _callbacks: [EventCallback<T>, EventTarget, boolean][] = []
 
-    append(callback: EventCallback<T>, target: EventTarget) {
+    append(callback: EventCallback<T>, target?: EventTarget) {
         this._callbacks.push([callback, target, false])
     }
 

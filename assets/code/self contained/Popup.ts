@@ -11,12 +11,8 @@ export abstract class Popup<TResult = void> extends Component {
 
     protected result: TResult
 
-    private _onClosed: Delegate<TResult>
-    get onClosed() {
-        if (!this._onClosed)
-            this._onClosed = new Delegate<TResult>()
-        return this._onClosed
-    }
+    public readonly onHide = new Delegate()
+    public readonly onClosed = new Delegate<TResult>()
 
     @property(Sprite)
     fade: Sprite
@@ -58,6 +54,7 @@ export abstract class Popup<TResult = void> extends Component {
         if (!this.showing)
             return Promise.resolve()
         this.showing = false
+        this.onHide.emit()
 
         this.anim?.stop()
         this.anim = tween(this).parallel(
@@ -81,8 +78,7 @@ export abstract class Popup<TResult = void> extends Component {
 
         if (result != undefined)
             this.result = result
-        if (this._onClosed)
-            this._onClosed.emit(this.result)
+        this.onClosed.emit(this.result)
 
         this.node.destroy()
     }

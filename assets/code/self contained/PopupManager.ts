@@ -11,6 +11,7 @@ export class PopupManager extends Component {
     prefabs: Prefab[] = []
 
     static readonly onPushPopup = new Delegate()
+    static readonly onHidePopup = new Delegate()
     static readonly onPopPopup = new Delegate()
 
     private static _instance: PopupManager
@@ -61,6 +62,7 @@ export class PopupManager extends Component {
 
         this.openPopups.push(popup as Popup)
         PopupManager.onPushPopup.emit()
+        popup.onHide.once(() => PopupManager.onHidePopup.emit())
         popup.onClosed.once(() => {
             const i = this.openPopups.indexOf(popup as Popup)
             if (i >= 0) {

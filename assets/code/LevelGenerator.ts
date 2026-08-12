@@ -13,7 +13,7 @@ let loadedLocale: string
 
 async function checkWords(locale: string) {
     if (loadedLocale != locale) {
-        const bundle = await loadBundle("bundle")
+        const bundle = await loadBundle("words")
         const text = (await loadFile<TextAsset>(`words_all_${locale}`, bundle)).text
 
         wordsByLen = []

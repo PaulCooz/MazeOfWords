@@ -1,3 +1,5 @@
+import { Delegate } from "./Delegate"
+
 interface AdvCallbacks {
     onOpen?: () => void
     onClose?: (wasShown: boolean) => void
@@ -5,7 +7,12 @@ interface AdvCallbacks {
 }
 
 const SdkWaitMs = 15000
-const mockLog = console.log
+const mockLog = (..._: any[]) => { } // console.log
+
+let yndxPause = false
+let gamePause = false
+let prevStopped: boolean
+export const onYaPause = new Delegate<boolean>()
 
 export async function initYandex() {
     if (globalThis.YaGames != undefined) { // sdk.js is connected
@@ -18,10 +25,12 @@ export async function initYandex() {
 
     globalThis.YG.on("game_api_pause", () => {
         yndxPause = true
+        onYaPause.emit(yndxPause)
         refreshGameplay()
     })
     globalThis.YG.on("game_api_resume", () => {
         yndxPause = false
+        onYaPause.emit(yndxPause)
         refreshGameplay()
     })
 }
@@ -35,9 +44,6 @@ export function loadingReady() {
     globalThis.YG.features.LoadingAPI.ready()
 }
 
-let yndxPause = false
-let gamePause = false
-let prevStopped: boolean
 function refreshGameplay() {
     if (globalThis.YG == undefined)
         return

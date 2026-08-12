@@ -1,4 +1,4 @@
-import { _decorator, Color, Input, input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
+import { _decorator, AudioClip, Color, Input, input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
 import { Grid } from './Grid'
 import { PipelineComponent } from './PipelineComponent'
 import { Level } from './Level'
@@ -6,6 +6,7 @@ import { GridCell } from './GridCell'
 import { isWordExist } from './LevelGenerator'
 import { toPromise } from './self contained/Utils'
 import { Direction, LevelCompleteEvent } from './Common'
+import { Audio } from './Audio'
 const { ccclass, property } = _decorator
 
 const SelectScale = 0.95
@@ -26,6 +27,17 @@ export class GridInput extends PipelineComponent {
     @property(Label)
     wordLabel: Label
 
+    @property([AudioClip])
+    audioClips: AudioClip[] = []
+
+    @property([AudioClip])
+    wordWrongClips: AudioClip[] = []
+    @property([AudioClip])
+    wordBonusClips: AudioClip[] = []
+    @property([AudioClip])
+    wordCorrectClips: AudioClip[] = []
+    private wordResToClip: { [key in WordResult]: AudioClip[] }
+
     private level: Level
     private pressing: boolean
     private busy: boolean
@@ -39,6 +51,12 @@ export class GridInput extends PipelineComponent {
     awake() {
         this.node.on(NodeEventType.MOUSE_UP, this.mouseUp, this)
         input.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
+
+        this.wordResToClip = {
+            ["wrong"]: this.wordWrongClips,
+            ["bonus"]: this.wordBonusClips,
+            ["correct"]: this.wordCorrectClips,
+        }
     }
 
     levelStart(level: Level) {
@@ -81,8 +99,9 @@ export class GridInput extends PipelineComponent {
         if (cell == last)
             return
         if (cell == prev) {
-            this.updateLabel()
             const removed = this.path.pop()
+            this.playSound()
+            this.updateLabel()
             prev.setInputDirection(null)
             removed.setInputDirection(null)
             this.deselectCell(removed)
@@ -98,6 +117,7 @@ export class GridInput extends PipelineComponent {
             last.setInputDirection(this.directionBetween(last, cell))
 
         this.path.push(cell)
+        this.playSound()
         this.updateLabel()
         this.selectCell(cell)
     }
@@ -113,6 +133,7 @@ export class GridInput extends PipelineComponent {
         const cells = [...this.path]
         const word = this.word
         const result = this.evaluateWord(word)
+        Audio.playSoundRand(this.wordResToClip[result], 0.6)
 
         this.busy = true
         await this.playResult(result, cells)
@@ -163,6 +184,11 @@ export class GridInput extends PipelineComponent {
 
     private updateLabel() {
         this.wordLabel.string = this.word
+    }
+
+    private playSound() {
+        const p = this.path.length, c = this.audioClips.length
+        Audio.playSound(this.audioClips[p < c ? p : c - 1], 0.3)
     }
 
     private selectCell(cell: GridCell) {

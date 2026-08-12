@@ -13,8 +13,8 @@ export class PlayerStorage {
     static prevLevels = new StorageValue<LevelType>("prevLevels", {})
     static lenToWordIndexes = new StorageValue<Len2WordIndexType>("lenToWordIndexes", {})
 
-    static sound = new StorageValue<number>("sound", 0.5)
-    static music = new StorageValue<number>("music", 0.5)
+    static sound = new StorageValue<number>("sound", 0.6)
+    static music = new StorageValue<number>("music", 0.3)
 
     static lang = new StorageValue<Locale>("lang", "en")
     static langChosen = new StorageValue<boolean>("langChosen", false) // ignore yandex default if picked lang

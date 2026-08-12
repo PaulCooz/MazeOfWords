@@ -28,3 +28,7 @@ export function toPromise(tween: Tween): Promise<void> {
         tween.call(() => resolve()).start()
     })
 }
+
+export function waitSec(sec: number) {
+    return new Promise(resolve => setTimeout(resolve, sec * 1000))
+}
