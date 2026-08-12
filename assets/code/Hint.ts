@@ -7,6 +7,7 @@ import { PlayerStorage } from './PlayerStorage'
 import { OpenedLetterEvent, OpenLetterEvent } from './Common'
 import { Config } from './Config'
 import { toPromise } from './self contained/Utils'
+import { Delegate } from './self contained/Delegate'
 const { ccclass, property } = _decorator
 
 @ccclass('Hint')
@@ -25,6 +26,8 @@ export class Hint extends PipelineComponent {
 
     private level: Level
     private busy: boolean
+
+    readonly onNoCoins = new Delegate()
 
     awake() {
         this.button.node.on(Button.EventType.CLICK, this.onClick, this)
@@ -59,7 +62,7 @@ export class Hint extends PipelineComponent {
         this.busy = true
 
         if (PlayerStorage.coins.value < Config.hintCost) {
-            await this.showNoCoinsDialog()
+            this.onNoCoins.emit()
             this.busy = false
             return
         }
@@ -72,10 +75,6 @@ export class Hint extends PipelineComponent {
         this.node.dispatchEvent(new OpenedLetterEvent())
 
         this.busy = false
-    }
-
-    private showNoCoinsDialog(): Promise<boolean> {
-        return undefined // TODO: no-coins popup / rewarded
     }
 
     private flyCoinTo(cell: GridCell) {

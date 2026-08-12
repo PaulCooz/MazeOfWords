@@ -38,6 +38,10 @@ const Translations: { [key in string]: { [key in Locale]: string } } = {
         ["ru"]: "Загрузка...",
         ["en"]: "Loading...",
     },
+    ["NoCoinsForHint"]: {
+        ["ru"]: "Нет монет. Вы можете получить их за рекламу",
+        ["en"]: "No coins. You can get them for advertising",
+    },
     ["ru"]: { ["ru"]: "Русский", ["en"]: "Русский" },
     ["en"]: { ["ru"]: "English", ["en"]: "English" },
 }

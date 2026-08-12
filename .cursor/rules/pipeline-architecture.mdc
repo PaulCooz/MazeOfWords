@@ -40,4 +40,5 @@ Avoid direct `GameManager` imports from pipeline features.
 
 - End-of-level buttons share `RevealButton` (Widget fix + scale show/hide): `NextLevel`, `Definition`.
 - Popups go through `PopupManager`; open popups and “not playing” drive `setGamePaused` → GameplayAPI start/stop.
+- Toasts: `Toast.push(message)` (setup from `GameManager`); panel slides via Widget `top`; replace-in-place if another message arrives while visible.
 - Fullscreen interstitial: `Adv.tryShowFullscreen` on next-level click, cooldown `Config.interCooldown` (from last fullscreen or session start — not rewarded).

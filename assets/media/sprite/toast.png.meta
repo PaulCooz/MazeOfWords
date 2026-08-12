@@ -11,7 +11,7 @@
     "6c48a": {
       "importer": "texture",
       "uuid": "d5d150be-faba-4b39-8deb-cc3d35d94e8b@6c48a",
-      "displayName": "message",
+      "displayName": "toast",
       "id": "6c48a",
       "name": "texture",
       "userData": {
@@ -35,7 +35,7 @@
     "f9941": {
       "importer": "sprite-frame",
       "uuid": "d5d150be-faba-4b39-8deb-cc3d35d94e8b@f9941",
-      "displayName": "message",
+      "displayName": "toast",
       "id": "f9941",
       "name": "spriteFrame",
       "userData": {

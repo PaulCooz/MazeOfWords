@@ -8,6 +8,7 @@ import { Config } from './Config'
 import { CloudSave } from './CloudSave'
 import { initYandex, loadingReady, setGamePaused, yandexLang } from './self contained/Yandex'
 import { PopupManager } from './self contained/PopupManager'
+import { Toast } from './self contained/Toast'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')
@@ -16,6 +17,8 @@ export class GameManager extends Component {
     pipeline: PipelineComponent[] = []
     @property(PopupManager)
     popupManager: PopupManager
+    @property(Toast)
+    toast: Toast
 
     private level: Level
     private playing = false
@@ -24,6 +27,7 @@ export class GameManager extends Component {
         PlayerStorage.clearAll() // for debug
 
         this.popupManager.setup()
+        this.toast.setup()
 
         this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
         this.node.on(LevelChangeEvent.Name, this.levelNext, this)
