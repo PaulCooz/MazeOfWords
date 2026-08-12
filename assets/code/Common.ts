@@ -25,6 +25,8 @@ export class OpenedLetterEvent extends Event {
     constructor() { super(OpenedLetterEvent.Name, true) }
 }
 
+export type WordResult = 'correct' | 'bonus' | 'wrong'
+
 export type Locale = "en" | "ru"
 export const Locales = ["en", "ru"]
 

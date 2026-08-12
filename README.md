@@ -59,7 +59,7 @@ flowchart LR
 1. Init Yandex SDK (or mock), pull cloud saves and remote config; use the Yandex language until the player picks one in settings (`langChosen`)
 2. Load dictionaries for the active locale from the `bundle` asset pack
 3. Create or restore the current level for that locale, then `levelStart` across the pipeline; report game ready and gameplay start
-4. Player traces adjacent cells; submit evaluates `correct` / `bonus` / `wrong` with short feedback (arrows + colors)
+4. Player traces adjacent cells; submit evaluates `correct` / `bonus` / `wrong` with short feedback (arrows + colors). First-time `correct` / `bonus` flies `Config.correctCoins` / `Config.bonusCoins` into the header counter
 5. `correct` word → `levelFinish` (lock play, reveal next / definition if wiki is reachable). Next → bump index, clear this locale’s current cache, maybe show a fullscreen ad, start again
 6. Language change → keep in-progress levels per locale (empty caches may be dropped), reload for the new language
 

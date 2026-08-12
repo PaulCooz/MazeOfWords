@@ -6,6 +6,12 @@ export function withA(alpha: number, color: Color) {
     return n
 }
 
+export function withX<T extends { clone: () => T, x: number }>(x: number, v: T): T {
+    const n = v.clone()
+    n.x = x
+    return n
+}
+
 export function withY<T extends { clone: () => T, y: number }>(y: number, v: T): T {
     const n = v.clone()
     n.y = y

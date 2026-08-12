@@ -1,4 +1,4 @@
-import { _decorator, Button, instantiate, Sprite, tween, UITransform, Vec3, Widget } from 'cc'
+import { _decorator, Button, instantiate, Prefab, Sprite, tween, UITransform, Vec3 } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { Grid } from './Grid'
 import { Level } from './Level'
@@ -18,6 +18,8 @@ export class Hint extends PipelineComponent {
 
     @property(Sprite)
     coinIcon: Sprite
+    @property(Prefab)
+    coinPrefab: Prefab
     @property(UITransform)
     topUI: UITransform
 
@@ -77,10 +79,9 @@ export class Hint extends PipelineComponent {
     }
 
     private flyCoinTo(cell: GridCell) {
-        const coin = instantiate(this.coinIcon.node)
+        const coin = instantiate(this.coinPrefab)
 
-        coin.getComponent(Widget).enabled = false
-        coin.setParent(this.topUI.node, true)
+        coin.setParent(this.topUI.node)
         coin.worldPosition = this.coinIcon.node.worldPosition
         const dur = Vec3.distance(coin.worldPosition, cell.node.worldPosition) / 2500.0
 

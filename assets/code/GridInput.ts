@@ -5,8 +5,9 @@ import { Level } from './Level'
 import { GridCell } from './GridCell'
 import { isWordExist } from './LevelGenerator'
 import { toPromise } from './self contained/Utils'
-import { Direction, LevelCompleteEvent } from './Common'
+import { Direction, LevelCompleteEvent, WordResult } from './Common'
 import { Audio } from './Audio'
+import { Delegate } from './self contained/Delegate'
 const { ccclass, property } = _decorator
 
 const SelectScale = 0.95
@@ -17,8 +18,6 @@ const ColorSelected = new Color(130, 200, 255)
 const ColorCorrect = new Color(100, 230, 130)
 const ColorBonus = new Color(255, 210, 80)
 const ColorWrong = new Color(255, 90, 90)
-
-type WordResult = 'correct' | 'bonus' | 'wrong'
 
 @ccclass('GridInput')
 export class GridInput extends PipelineComponent {
@@ -47,6 +46,8 @@ export class GridInput extends PipelineComponent {
     get word() {
         return this.path.map(c => c.letter.string).join('')
     }
+
+    readonly onWordEnter = new Delegate<[result: WordResult, word: string, cells: GridCell[]]>()
 
     awake() {
         this.node.on(NodeEventType.MOUSE_UP, this.mouseUp, this)
@@ -136,6 +137,7 @@ export class GridInput extends PipelineComponent {
         Audio.playSoundRand(this.wordResToClip[result], 0.6)
 
         this.busy = true
+        this.onWordEnter.emit([result, word, cells])
         await this.playResult(result, cells)
 
         if (result == 'correct') {

@@ -1,8 +1,10 @@
 import { getFlags } from "./self contained/Yandex"
 
 export class Config {
-    static hintCost = 1
-    static startCoins = 10
+    static hintCost = 10
+    static startCoins = 20
+    static correctCoins = 3
+    static bonusCoins = 1
 
     static interCooldown = 60 // secs since last interstitial or session start
 
@@ -15,17 +17,13 @@ export class Config {
     ]
 
     static async load() {
-        try {
-            const flags = await getFlags()
-            for (const key of Object.keys(flags)) {
-                try {
-                    Config[key] = JSON.parse(flags[key])
-                } catch {
-                    console.error(`bad config flag ${key}: ${flags[key]}`)
-                }
+        const flags = await getFlags()
+        for (const key of Object.keys(flags)) {
+            try {
+                Config[key] = JSON.parse(flags[key])
+            } catch {
+                console.error(`bad config flag ${key}: ${flags[key]}`)
             }
-        } catch (e) {
-            console.error("config load failed", e)
         }
     }
 }
