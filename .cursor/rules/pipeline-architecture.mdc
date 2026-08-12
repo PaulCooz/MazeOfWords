@@ -6,32 +6,38 @@ alwaysApply: false
 
 # Pipeline architecture
 
-`GameManager` owns level lifecycle. Feature scripts extend `PipelineComponent` and are listed in the scene `pipeline` array.
+`GameManager` owns boot + level lifecycle. Feature scripts extend `PipelineComponent` and are listed in the scene `pipeline` array.
+
+## Boot order (keep thin)
+
+1. Init Yandex (`initYandex` — waits for `index.ejs` globals or installs editor mock)
+2. `Config.load` + `CloudSave.pull` (parallel)
+3. Apply Yandex language unless `PlayerStorage.langChosen`
+4. `CloudSave.startPushLoop`, pipeline `awake`, `LoadingAPI.ready`, first `levelStart`
 
 ## Lifecycle contract
 
 1. **awake** — one-time wiring (listeners, hide UI). Called once from `GameManager.onLoad`.
-2. **levelStart(level)** — build/reset for a new `Level` (grid, input state, hide next button).
-3. **levelFinish** — react to main-word success (lock input, show next button).
+2. **levelStart(level)** — build/reset for a new `Level` (grid, input, labels, restore hints).
+3. **levelFinish** — react to main-word success (lock input, reveal next / definition buttons).
 
-Add a new feature by implementing the needed hooks and registering the component on the Canvas pipeline in the editor — do not hardcode peer references in `GameManager`.
+Add a new feature by implementing the needed hooks and registering the component on the pipeline in the editor — do not hardcode peer references in `GameManager`.
 
 ## Cross-feature signals
 
-Use bubbling Cocos `Event` subclasses from `Common.ts` (e.g. `LevelCompleteEvent`, `LevelChangeEvent`). Dispatch from the feature node; `GameManager` listens on its node and drives the pipeline.
-
-```typescript
-// feature → manager
-this.node.dispatchEvent(new LevelCompleteEvent())
-
-// manager
-this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
-```
+Use bubbling Cocos `Event` subclasses from `Common.ts` (e.g. `LevelCompleteEvent`, `LevelChangeEvent`, hint letter events). Dispatch from the feature node; `GameManager` listens on its node and drives the pipeline.
 
 Avoid direct `GameManager` imports from pipeline features.
 
-## Level data
+## Level + persistence
 
-- `LevelGenerator.createLevel(locale, index)` builds or restores from `PlayerStorage.currLevel`.
-- Progress keys live in `PlayerStorage` (`levelIndex`, `prevLevel`, `currLevel`, word-cursor map).
-- Persist mid-level mutations via `Level.saveAsCurr()` (e.g. found bonuses).
+- `LevelGenerator.createLevel(locale, index)` builds or restores from **per-locale** `PlayerStorage.currLevels`.
+- Mid-level mutations (`openLetterIndexes`, `bonuses`) → `Level.saveAsCurr()`.
+- Empty in-progress caches may be dropped on language switch; progress with hints/bonuses is kept per locale.
+- `CloudSave` mirrors all of `localStorage` to Yandex `player.setData` / `getData`.
+
+## UI / platform hooks
+
+- End-of-level buttons share `RevealButton` (Widget fix + scale show/hide): `NextLevel`, `Definition`.
+- Popups go through `PopupManager`; open popups and “not playing” drive `setGamePaused` → GameplayAPI start/stop.
+- Fullscreen interstitial: `Adv.tryShowFullscreen` on next-level click, cooldown `Config.interCooldown` (from last fullscreen or session start — not rewarded).

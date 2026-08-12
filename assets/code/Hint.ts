@@ -73,7 +73,7 @@ export class Hint extends PipelineComponent {
     }
 
     private showNoCoinsDialog(): Promise<boolean> {
-        return undefined // TODO
+        return undefined // TODO: no-coins popup / rewarded
     }
 
     private flyCoinTo(cell: GridCell) {

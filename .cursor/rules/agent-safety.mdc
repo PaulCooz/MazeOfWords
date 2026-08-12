@@ -10,6 +10,7 @@ alwaysApply: true
 - `assets/code/**/*.ts` — gameplay and helpers
 - `README.md`, `.cursor/rules/**` — intent and agent guidance
 - Word lists under `assets/bundle/` when changing dictionary content
+- `build-templates/**` — only when changing web shell / SDK bootstrap
 
 ## Edit with care
 

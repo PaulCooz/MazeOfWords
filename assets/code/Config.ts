@@ -4,7 +4,7 @@ export class Config {
     static hintCost = 1
     static startCoins = 10
 
-    static interCooldown = 60 // from the previous or start
+    static interCooldown = 60 // secs since last interstitial or session start
 
     static levelProgression = [
         { from: 0, to: 2, wordLength: [4] },

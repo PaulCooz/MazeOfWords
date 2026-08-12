@@ -7,7 +7,7 @@ interface AdvCallbacks {
 }
 
 const SdkWaitMs = 15000
-const mockLog = (..._: any[]) => { } // console.log
+const mockLog = (..._: any[]) => { } // swap to console.log when debugging SDK mock
 
 let yndxPause = false
 let gamePause = false

@@ -67,7 +67,7 @@ export class Grid extends PipelineComponent {
             (gridSize.y - ly.paddingTop - ly.paddingBottom - ly.spacingY * (h - 1)) / h
         ), MaxCellSize)
         ly.cellSize = new Size(cellSize, cellSize)
-        ly.constraint = 2 // TODO enum
+        ly.constraint = Layout.Constraint.FIXED_COL
         ly.constraintNum = w
 
         this.widget.horizontalCenter = (gridSize.width - (cellSize * w + this.layout.spacingX * (w - 1))) / 2

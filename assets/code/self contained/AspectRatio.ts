@@ -1,7 +1,6 @@
 import { _decorator, Component, screen, Size, UITransform, view, Widget } from 'cc'
 const { ccclass, property } = _decorator
 
-/// the component is trying to save ratio using height and horizontal paddings
 @ccclass('AspectRatio')
 export class AspectRatio extends Component {
     @property(UITransform)

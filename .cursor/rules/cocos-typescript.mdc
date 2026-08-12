@@ -10,7 +10,7 @@ alwaysApply: false
 
 - Use `@ccclass('ExactName')` matching the class; never rename casually — scenes store compressed UUID from `.meta`.
 - Wire scene references with `@property`; do not `find` by string at runtime unless unavoidable.
-- Put reusable, game-agnostic code under `self contained/`.
+- Put reusable, game-agnostic code under `self contained/` (must not import game scripts).
 
 ## Module-load safety
 
@@ -30,9 +30,14 @@ If the console shows `Missing class: …` on Grid/Canvas, check **earlier** impo
 - Dictionaries: Asset Bundle `bundle`, files `words_all_en` / `words_all_ru`.
 - Prefer `StorageValue` for player progress; remove keys on `undefined` rather than storing `"undefined"`.
 - Tweens: prefer existing helpers (`toPromise` in Utils) for awaitable animations.
+- `Rand`: mulberry32 state machine — never feed Cocos `pseudoRandom*` with consecutive integer seeds.
 
-## Editor artifacts
+## Yandex / editor
 
-- Commit `.meta` next to new scripts/prefabs.
-- Avoid hand-editing UUIDs in `.scene` / `.prefab` unless repairing a known broken reference.
+- Runtime SDK comes from `build-templates/web-mobile/index.ejs` (`YG`, `YG_Player`, `YG_Lang`).
+- Editor/preview without `sdk.js` → `Yandex.ts` mock (no real ads/cloud).
+- Do not create `.meta` or edit scenes/prefabs.
+
+## Editor packer
+
 - Do not override Cocos-generated `tsconfig` module settings (`Node16` / `es2025` breaks the editor packer).
