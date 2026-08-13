@@ -2,7 +2,7 @@ import { _decorator, Component } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { createLevel } from './LevelGenerator'
 import { PlayerStorage } from './PlayerStorage'
-import { LevelChangeEvent, LevelCompleteEvent, Locale, OpenedLetterEvent, OpenLetterEvent } from './Common'
+import { LevelChangeEvent, LevelCompleteEvent, Locale, OpenedLetterEvent } from './Common'
 import { Level } from './Level'
 import { Config } from './Config'
 import { CloudSave } from './CloudSave'
@@ -31,7 +31,6 @@ export class GameManager extends Component {
 
         this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
         this.node.on(LevelChangeEvent.Name, this.levelNext, this)
-        this.node.on(OpenLetterEvent.Name, this.openLetter, this)
         this.node.on(OpenedLetterEvent.Name, this.openedLetter, this)
         PopupManager.onPushPopup.append(this.checkPause, this)
         PopupManager.onPopPopup.append(this.checkPause, this)
@@ -68,10 +67,6 @@ export class GameManager extends Component {
             this.levelComplete()
     }
 
-    private openLetter(event: OpenLetterEvent) {
-        PlayerStorage.coins.value -= Config.hintCost
-        this.level.openLetterIndexes.push(event.wordIndex)
-    }
     private openedLetter() {
         if (this.level.allLettersOpened) {
             this.levelComplete()

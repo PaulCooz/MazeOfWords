@@ -5,6 +5,7 @@ export class Config {
     static startCoins = 20
     static correctCoins = 3
     static bonusCoins = 1
+    static rewardedCoins = 15
 
     static interCooldown = 60 // secs since last interstitial or session start
 

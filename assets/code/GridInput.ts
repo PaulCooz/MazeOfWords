@@ -50,6 +50,8 @@ export class GridInput extends PipelineComponent {
     readonly onWordEnter = new Delegate<[result: WordResult, word: string, cells: GridCell[]]>()
 
     awake() {
+        this.wordLabel.string = ""
+
         this.node.on(NodeEventType.MOUSE_UP, this.mouseUp, this)
         input.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
 

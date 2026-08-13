@@ -24,6 +24,6 @@ export class LevelLabel extends PipelineComponent {
     private updateLabel() {
         if (!this.level)
             return
-        this.label.string = `${localize("Level")}: ${this.level.index + 1}`
+        this.label.string = `${localize("LVL")}\n${this.level.index + 1}`
     }
 }

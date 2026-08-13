@@ -50,7 +50,7 @@ flowchart LR
 - **Level generation** — pick a word for the locale/index using `Config.levelProgression`, build a path scheme, cache the current level **per locale** so language switches restore open letters / bonuses
 - **Events** — features announce outcomes (`level-complete`, `level-change`, hint letter events, …) via bubbling Cocos events; the manager translates them into pipeline phases
 - **Persistence** — typed `StorageValue` keys for progress (safe under empty/corrupt localStorage). `CloudSave` mirrors localStorage ↔ Yandex `player.getData` / `setData`
-- **Platform (Yandex Games)** — `index.ejs` loads the SDK; `Yandex.ts` waits for globals or installs an editor mock, reports game ready, and tracks gameplay pause/resume. `Config` holds Remote Config–overridable constants. `Adv` shows fullscreen interstitials with `Config.interCooldown`
+- **Platform (Yandex Games)** — `index.ejs` loads the SDK; `Yandex.ts` waits for globals or installs an editor mock, reports game ready, and tracks gameplay pause/resume. `Config` holds Remote Config–overridable constants. `Adv` shows fullscreen interstitials with `Config.interCooldown`. The footer button shows a rewarded video and grants `Config.rewardedCoins`
 - **Popups / end buttons** — `PopupManager` + `Popup` subclasses; `RevealButton` base for Next / Definition show-hide
 - _**self contained**_ — helpers that **must not depend on game-specific files**
 
@@ -59,7 +59,7 @@ flowchart LR
 1. Init Yandex SDK (or mock), pull cloud saves and remote config; use the Yandex language until the player picks one in settings (`langChosen`)
 2. Load dictionaries for the active locale from the `bundle` asset pack
 3. Create or restore the current level for that locale, then `levelStart` across the pipeline; report game ready and gameplay start
-4. Player traces adjacent cells; submit evaluates `correct` / `bonus` / `wrong` with short feedback (arrows + colors). First-time `correct` / `bonus` flies `Config.correctCoins` / `Config.bonusCoins` into the header counter
+4. Player traces adjacent cells; submit evaluates `correct` / `bonus` / `wrong` with short feedback (arrows + colors). First-time `correct` / `bonus` flies `Config.correctCoins` / `Config.bonusCoins` into the header counter. The footer ad button plays a rewarded video and flies `Config.rewardedCoins` the same way
 5. `correct` word → `levelFinish` (lock play, reveal next / definition if wiki is reachable). Next → bump index, clear this locale’s current cache, maybe show a fullscreen ad, start again
 6. Language change → keep in-progress levels per locale (empty caches may be dropped), reload for the new language
 
@@ -76,8 +76,6 @@ flowchart LR
 
 ## TODO
 
-- rewarded ads (extra coins / no-coins dialog)
-- sticky banner (optional)
 - remove debug `PlayerStorage.clearAll()` in `GameManager.onLoad` before release
 
 ## Agent notes

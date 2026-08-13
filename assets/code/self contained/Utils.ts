@@ -30,7 +30,7 @@ export function labelCounterTween(label: Label, value: number, duration: number 
 }
 
 export function labelStringTween(label: Label, text: string, duration: number = 0.3) {
-    const from = label.string ?? "", to = text ?? ""
+    const from = label.string ?? "", to = text
     const state = { t: 0 }
     return tween(state).to(duration, { t: 1 }, {
         onUpdate: () => label.string = morphString(from, to, state.t),
@@ -43,10 +43,10 @@ function morphString(from: string, to: string, ratio: number) {
     if (ratio >= 1)
         return to
 
-    const reveal = Math.floor(Math.max(from.length, to.length, 1) * ratio)
+    const reveal = Math.floor(Math.max(from.length, to.length) * ratio)
     let out = ""
     for (let i = 0; i < Math.round(math.lerp(from.length, to.length, ratio)); i++)
-        out += i < reveal ? to[i] : from[i]
+        out += (i < reveal ? to[i] : from[i]) ?? ""
     return out
 }
 

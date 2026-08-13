@@ -42,3 +42,4 @@ Avoid direct `GameManager` imports from pipeline features.
 - Popups go through `PopupManager`; open popups and “not playing” drive `setGamePaused` → GameplayAPI start/stop.
 - Toasts: `Toast.push(message)` (setup from `GameManager`); panel slides via Widget `top`; replace-in-place if another message arrives while visible.
 - Fullscreen interstitial: `Adv.tryShowFullscreen` on next-level click, cooldown `Config.interCooldown` (from last fullscreen or session start — not rewarded).
+- Rewarded video: footer `RewardedAd` button; on success flies `Config.rewardedCoins` into the header counter.

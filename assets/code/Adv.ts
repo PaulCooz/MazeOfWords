@@ -9,11 +9,9 @@ export class Adv {
             return
 
         Adv.lastFullscreen = Date.now()
-        showFullscreenAdv({
-            onClose: (wasShown) => {
-                if (wasShown)
-                    Adv.lastFullscreen = Date.now()
-            },
+        showFullscreenAdv().then(success => {
+            if (success)
+                Adv.lastFullscreen = Date.now()
         })
     }
 }

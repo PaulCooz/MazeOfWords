@@ -2,15 +2,13 @@ import { _decorator, Component, Label, Sprite, Tween, tween, Widget } from 'cc'
 import { labelStringTween, toPromise, waitSec } from './Utils'
 const { ccclass, property } = _decorator
 
-const ShowTop = 15, HideTop = -150
-const MorphDuration = 0.5, MinDuration = 1.2, ReadPerChar = 0.05
-// TODO review this
+const ShowTop = 15, HideTop = -160
+const MorphDuration = 0.7, MinDuration = 1, ReadPerChar = 0.05
+
 @ccclass('Toast')
 export class Toast extends Component {
     private static _instance: Toast
 
-    @property(Sprite)
-    panel: Sprite
     @property(Widget)
     widget: Widget
     @property(Label)
@@ -18,7 +16,7 @@ export class Toast extends Component {
 
     private busy = false
     private pending: string = null
-    private wakeHold: () => void = null
+    private drop: () => void = null
     private panelAnim: Tween
 
     public setup() { // call it manually!
@@ -29,16 +27,22 @@ export class Toast extends Component {
     }
 
     static push(message: string) {
-        Toast._instance?.pushMessage(message)
+        Toast._instance.pushMessage(message)
     }
 
     private pushMessage(message: string) {
+        if (this.label.string == message || this.pending == message)
+            return
         if (this.busy) {
             this.pending = message
-            this.wakeHold?.()
+            this.drop?.()
             return
         }
         this.run(message)
+    }
+
+    public tryDrop() {
+        this.drop?.()
     }
 
     private async run(message: string) {
@@ -53,43 +57,41 @@ export class Toast extends Component {
         ])
 
         while (true) {
-            const hold = MinDuration + current.length * ReadPerChar
-            const signal = await this.waitHold(hold)
-
-            if (signal == 'timeout' && this.pending == null)
+            const signal = await this.hold(MinDuration + current.length * ReadPerChar)
+            if (signal == 'timeout')
                 break
 
-            await waitSec(0.5)
             const next = this.pending
             this.pending = null
-            if (next == null)
+            if (!next)
                 break
 
-            await toPromise(labelStringTween(this.label, next, MorphDuration))
+            await toPromise(labelStringTween(this.label, next, 2 * MorphDuration))
             current = next
         }
 
         await this.animateTop(HideTop, 0.25, 'backIn')
         this.label.string = ''
-        this.busy = false
 
         if (this.pending != null) {
             const next = this.pending
             this.pending = null
             this.run(next)
+        } else {
+            this.busy = false
         }
     }
 
-    private waitHold(sec: number): Promise<'timeout' | 'replace'> {
+    private hold(sec: number): Promise<'timeout' | 'replace'> {
         return new Promise(resolve => {
             const id = setTimeout(() => {
-                this.wakeHold = null
+                this.drop = null
                 resolve('timeout')
             }, sec * 1000)
 
-            this.wakeHold = () => {
+            this.drop = () => {
                 clearTimeout(id)
-                this.wakeHold = null
+                this.drop = null
                 resolve('replace')
             }
         })

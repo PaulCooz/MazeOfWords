@@ -1,11 +1,5 @@
 import { Delegate } from "./Delegate"
 
-interface AdvCallbacks {
-    onOpen?: () => void
-    onClose?: (wasShown: boolean) => void
-    onError?: (error: unknown) => void
-}
-
 const SdkWaitMs = 15000
 const mockLog = (..._: any[]) => { } // swap to console.log when debugging SDK mock
 
@@ -34,16 +28,9 @@ export async function initYandex() {
         refreshGameplay()
     })
 }
-
-export function yandexLang(): string {
-    const lang = globalThis.YG_Lang ?? "en"
-    return ["ru", "be", "kk", "uk", "uz"].includes(lang) ? "ru" : lang
-}
-
 export function loadingReady() {
     globalThis.YG.features.LoadingAPI.ready()
 }
-
 function refreshGameplay() {
     if (globalThis.YG == undefined)
         return
@@ -58,10 +45,14 @@ function refreshGameplay() {
     else
         globalThis.YG.features.GameplayAPI.start()
 }
-
 export function setGamePaused(paused: boolean) {
     gamePause = paused
     refreshGameplay()
+}
+
+export function yandexLang(): string {
+    const lang = globalThis.YG_Lang ?? "en"
+    return ["ru", "be", "kk", "uk", "uz"].includes(lang) ? "ru" : lang
 }
 
 export function getFlags(): Promise<{ [key: string]: string }> {
@@ -71,13 +62,36 @@ export function getFlags(): Promise<{ [key: string]: string }> {
 export function getPlayerData(): Promise<object> {
     return globalThis.YG_Player.getData()
 }
-
 export function setPlayerData(data: object): Promise<void> {
     return globalThis.YG_Player.setData(data)
 }
 
-export function showFullscreenAdv(callbacks?: AdvCallbacks) {
-    globalThis.YG.adv.showFullscreenAdv({ callbacks })
+type AdvCallbacks = {
+    onOpen?: () => void
+    onRewarded?: () => void
+    onClose?: (wasShown?: boolean) => void
+    onError?: (error?: any) => void
+}
+
+export function showFullscreenAdv(): Promise<boolean> {
+    return new Promise(resolve => {
+        globalThis.YG.adv.showFullscreenAdv({
+            callbacks: {
+                onClose: (wasShown: boolean) => resolve(wasShown)
+            }
+        })
+    })
+}
+export function showRewardedVideo(): Promise<boolean> {
+    let success = false
+    return new Promise(resolve => {
+        globalThis.YG.adv.showRewardedVideo({
+            callbacks: {
+                onRewarded: () => success = true,
+                onClose: (wasShown: boolean) => resolve(wasShown && success),
+            }
+        })
+    })
 }
 
 function installMock() {
@@ -99,6 +113,11 @@ function installMock() {
         adv: {
             showFullscreenAdv: (opts?: { callbacks?: AdvCallbacks }) => {
                 mockLog("[Yandex] fullscreen adv")
+                opts?.callbacks?.onClose?.(true)
+            },
+            showRewardedVideo: (opts?: { callbacks?: AdvCallbacks }) => {
+                mockLog("[Yandex] rewarded video")
+                opts?.callbacks?.onRewarded?.()
                 opts?.callbacks?.onClose?.(true)
             },
         },

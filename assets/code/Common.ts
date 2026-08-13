@@ -10,16 +10,6 @@ export class LevelChangeEvent extends Event {
     constructor() { super(LevelChangeEvent.Name, true) }
 }
 
-export class OpenLetterEvent extends Event {
-    static readonly Name = "open-letter"
-
-    readonly wordIndex: number
-
-    constructor(wordIndex: number) {
-        super(OpenLetterEvent.Name, true)
-        this.wordIndex = wordIndex
-    }
-}
 export class OpenedLetterEvent extends Event {
     static readonly Name = "opened-letter"
     constructor() { super(OpenedLetterEvent.Name, true) }

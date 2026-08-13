@@ -30,9 +30,9 @@ const Translations: { [key in string]: { [key in Locale]: string } } = {
         ["ru"]: "Определение",
         ["en"]: "Definition",
     },
-    ["Level"]: {
-        ["ru"]: "Уровень",
-        ["en"]: "Level",
+    ["LVL"]: {
+        ["ru"]: "уровень",
+        ["en"]: "level",
     },
     ["Loading"]: {
         ["ru"]: "Загрузка...",

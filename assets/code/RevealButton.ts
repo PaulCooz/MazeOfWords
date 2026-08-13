@@ -14,6 +14,7 @@ export abstract class RevealButton extends PipelineComponent {
 
     awake() {
         this.button.node.on(Button.EventType.CLICK, this.onClick, this)
+        this.hide(false)
     }
 
     levelStart(_level: Level) {

@@ -1,13 +1,13 @@
-import { _decorator, Button, instantiate, Prefab, Sprite, tween, UITransform, Vec3 } from 'cc'
+import { _decorator, Button, UITransform } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { Grid } from './Grid'
 import { Level } from './Level'
-import { GridCell } from './GridCell'
 import { PlayerStorage } from './PlayerStorage'
-import { OpenedLetterEvent, OpenLetterEvent } from './Common'
+import { OpenedLetterEvent } from './Common'
 import { Config } from './Config'
 import { toPromise } from './self contained/Utils'
 import { Delegate } from './self contained/Delegate'
+import { Coins } from './Coins'
 const { ccclass, property } = _decorator
 
 @ccclass('Hint')
@@ -17,10 +17,8 @@ export class Hint extends PipelineComponent {
     @property(Grid)
     grid: Grid
 
-    @property(Sprite)
-    coinIcon: Sprite
-    @property(Prefab)
-    coinPrefab: Prefab
+    @property(Coins)
+    coins: Coins
     @property(UITransform)
     topUI: UITransform
 
@@ -68,27 +66,12 @@ export class Hint extends PipelineComponent {
         }
 
         const cell = this.grid.getWordCell(wordIndex)
-        this.node.dispatchEvent(new OpenLetterEvent(wordIndex))
-        await this.flyCoinTo(cell)
+        await toPromise(this.coins.subCoin(cell.node.worldPosition, 0.1, Config.hintCost))
+        this.level.openLetterIndexes.push(wordIndex)
 
         cell.setHinted(this.level.directionNextTo(wordIndex))
         this.node.dispatchEvent(new OpenedLetterEvent())
 
         this.busy = false
-    }
-
-    private flyCoinTo(cell: GridCell) {
-        const coin = instantiate(this.coinPrefab)
-
-        coin.setParent(this.topUI.node)
-        coin.worldPosition = this.coinIcon.node.worldPosition
-        const dur = Vec3.distance(coin.worldPosition, cell.node.worldPosition) / 2500.0
-
-        return toPromise(
-            tween(coin)
-                .to(dur, { worldPosition: cell.node.worldPosition })
-                .to(0.2, { scale: Vec3.ZERO }, { easing: 'backIn' })
-                .destroySelf()
-        )
     }
 }

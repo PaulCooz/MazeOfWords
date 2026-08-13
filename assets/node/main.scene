@@ -23,7 +23,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 118
+      "__id__": 119
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -54,7 +54,7 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 119
+      "__id__": 120
     },
     "_id": "c0763a9f-e348-4f55-b993-2f27ad47b30f"
   },
@@ -98,9 +98,6 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 114
-      },
-      {
         "__id__": 115
       },
       {
@@ -108,6 +105,9 @@
       },
       {
         "__id__": 117
+      },
+      {
+        "__id__": 118
       }
     ],
     "_prefab": null,
@@ -838,7 +838,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0,
+      "y": 3,
       "z": 0
     },
     "_lrot": {
@@ -876,8 +876,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 350,
-      "height": 60
+      "width": 200,
+      "height": 120
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -906,13 +906,13 @@
       "b": 255,
       "a": 255
     },
-    "_string": "Level: 1",
+    "_string": "level\n1",
     "_horizontalAlign": 1,
-    "_verticalAlign": 0,
+    "_verticalAlign": 1,
     "_actualFontSize": 50,
     "_fontSize": 50,
     "_fontFamily": "Arial",
-    "_lineHeight": 50,
+    "_lineHeight": 45,
     "_overflow": 2,
     "_enableWrapText": false,
     "_font": {
@@ -1023,8 +1023,8 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 195,
-      "y": 0,
+      "x": 180,
+      "y": 3,
       "z": 0
     },
     "_lrot": {
@@ -1062,7 +1062,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 150,
+      "width": 180,
       "height": 60
     },
     "_anchorPoint": {
@@ -1094,7 +1094,7 @@
     },
     "_string": "0",
     "_horizontalAlign": 2,
-    "_verticalAlign": 0,
+    "_verticalAlign": 1,
     "_actualFontSize": 50,
     "_fontSize": 50,
     "_fontFamily": "Arial",
@@ -2332,6 +2332,9 @@
     "hint": {
       "__id__": 65
     },
+    "coins": {
+      "__id__": 33
+    },
     "_id": "504nssfVtEJKrr9kYZIJuC"
   },
   {
@@ -2350,12 +2353,8 @@
     "grid": {
       "__id__": 46
     },
-    "coinIcon": {
-      "__id__": 34
-    },
-    "coinPrefab": {
-      "__uuid__": "31e8677e-5457-471e-be5b-4754be158141",
-      "__expectedType__": "cc.Prefab"
+    "coins": {
+      "__id__": 33
     },
     "topUI": {
       "__id__": 38
@@ -3603,13 +3602,13 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 111
-      },
-      {
         "__id__": 112
       },
       {
         "__id__": 113
+      },
+      {
+        "__id__": 114
       }
     ],
     "_prefab": null,
@@ -3674,7 +3673,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 715,
+      "y": 725,
       "z": 0
     },
     "_lrot": {
@@ -3943,7 +3942,7 @@
     "_target": null,
     "_left": 25,
     "_right": 25,
-    "_top": -150,
+    "_top": -160,
     "_bottom": 0,
     "_horizontalCenter": 0,
     "_verticalCenter": 0,
@@ -3969,7 +3968,11 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 111
+      }
+    ],
     "_interactable": true,
     "_transition": 0,
     "_normalColor": {
@@ -4010,6 +4013,16 @@
     "_id": "f35RmoF4BGkoECC0FdN+ZC"
   },
   {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 101
+    },
+    "component": "",
+    "_componentId": "486a8PthX5CRL+z5swpugb5",
+    "handler": "tryDrop",
+    "customEventData": ""
+  },
+  {
     "__type__": "cc.UITransform",
     "_name": "",
     "_objFlags": 0,
@@ -4041,9 +4054,6 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "panel": {
-      "__id__": 108
-    },
     "widget": {
       "__id__": 109
     },
@@ -4199,7 +4209,7 @@
       "__id__": 15
     },
     "toast": {
-      "__id__": 112
+      "__id__": 113
     },
     "_id": "a3yGoa3EZMU4cT6hljSaxq"
   },
@@ -4214,28 +4224,28 @@
   {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 120
-    },
-    "shadows": {
       "__id__": 121
     },
-    "_skybox": {
+    "shadows": {
       "__id__": 122
     },
-    "fog": {
+    "_skybox": {
       "__id__": 123
     },
-    "octree": {
+    "fog": {
       "__id__": 124
     },
-    "skin": {
+    "octree": {
       "__id__": 125
     },
-    "lightProbeInfo": {
+    "skin": {
       "__id__": 126
     },
-    "postSettings": {
+    "lightProbeInfo": {
       "__id__": 127
+    },
+    "postSettings": {
+      "__id__": 128
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false

@@ -7,6 +7,7 @@ import { GridCell } from './GridCell'
 import { Config } from './Config'
 import { Level } from './Level'
 import { labelCounterTween } from './self contained/Utils'
+import { Rand } from './self contained/Rand'
 const { ccclass, property } = _decorator
 
 @ccclass('Coins')
@@ -24,8 +25,10 @@ export class Coins extends PipelineComponent {
     gridInput: GridInput
 
     private level: Level
+    private rand: Rand
 
     awake() {
+        this.rand = new Rand()
         this.label.string = PlayerStorage.coins.value.toString()
 
         PlayerStorage.coins.onChange.append(this.coinsChanged, this)
@@ -53,23 +56,49 @@ export class Coins extends PipelineComponent {
             return
 
         for (let i = 0; i < amount; i++) {
-            const t = Math.round(math.lerp(0, cells.length - 1, i / (amount - 1)))
-            this.flyCoin(cells[t].node.worldPosition, i * 0.1)
+            const t = Math.round(math.lerp(0, cells.length - 1, i / Math.max(amount - 1, 1)))
+            this.addCoin(cells[t].node.worldPosition, 0.1 + i * 0.1)
         }
     }
 
-    private flyCoin(from: Vec3, delay: number) {
+    public addCoin(from: Vec3, delay: number, amount = 1) {
+        return this.flyCoinFromTo(from, this.coinIcon.node.worldPosition, delay, amount)
+    }
+
+    public subCoin(to: Vec3, delay: number, amount = 1) {
+        return this.flyCoinFromTo(this.coinIcon.node.worldPosition, to, delay, -amount)
+    }
+
+    private flyCoinFromTo(from: Vec3, to: Vec3, delay: number, inc: number) {
         const coin = instantiate(this.coinPrefab)
         coin.setParent(this.topUI.node)
         coin.worldPosition = from
+        coin.scale = Vec3.ZERO
 
-        const dest = this.coinIcon.node.worldPosition
-        const dur = Vec3.distance(from, dest) / 2000.0
+        // curved by midpoint + normal
+        const l = this.rand.range(0.1, 0.3)
+        const sub = new Vec3(to.x - from.x, to.y - from.y)
+        const mid = new Vec3(from.x + l * sub.x, from.y + l * sub.y)
+        const norm = sub.normalize()
+        const skew = this.rand.range(0, 300), sign = this.rand.chance(50) ? +skew : -skew
+        mid.y += -sign * norm.x
+        mid.x += sign * norm.y
 
-        tween(coin)
-            .delay(delay)
-            .to(dur, { worldPosition: dest })
-            .call(() => PlayerStorage.coins.value += 1)
+        const dur = Vec3.distance(from, to) / 2000.0
+        const tv0 = sub, tv1 = new Vec3()
+        return tween(coin)
+            .to(delay, { scale: Vec3.ONE }, { easing: 'backOut' })
+            .to(dur, {}, {
+                easing: 'quartIn',
+                onUpdate(_, ratio) {
+                    coin.worldPosition = Vec3.lerp(tv0,
+                        Vec3.lerp(tv0, from, mid, ratio),
+                        Vec3.lerp(tv1, mid, to, ratio),
+                        ratio
+                    )
+                },
+            })
+            .call(() => PlayerStorage.coins.value += inc)
             .to(0.2, { scale: Vec3.ZERO }, { easing: 'backIn' })
             .destroySelf()
             .start()
