@@ -1,4 +1,4 @@
-import { _decorator, math } from 'cc'
+import { _decorator, Label, math } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { Coins } from './Coins'
 import { showRewardedVideo } from './self contained/Yandex'
@@ -9,8 +9,14 @@ const { ccclass, property } = _decorator
 export class RewardedAd extends PipelineComponent {
     @property(Coins)
     coins: Coins
+    @property(Label)
+    countLabel: Label
 
     private busy = false
+
+    public awake(): void {
+        this.countLabel.string = `+${Config.rewardedCoins}`
+    }
 
     public async onClick() {
         if (this.busy)

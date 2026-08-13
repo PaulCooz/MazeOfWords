@@ -1,4 +1,4 @@
-import { _decorator, Button, UITransform } from 'cc'
+import { _decorator, Button, Label, UITransform } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { Grid } from './level/Grid'
 import { Level } from './level/Level'
@@ -17,6 +17,8 @@ export class Hint extends PipelineComponent {
     @property(Grid)
     grid: Grid
 
+    @property(Label)
+    countLabel: Label
     @property(Coins)
     coins: Coins
     @property(UITransform)
@@ -29,6 +31,7 @@ export class Hint extends PipelineComponent {
 
     awake() {
         this.button.node.on(Button.EventType.CLICK, this.onClick, this)
+        this.countLabel.string = Config.hintCost.toString()
     }
 
     levelStart(level: Level) {

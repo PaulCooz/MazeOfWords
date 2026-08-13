@@ -12,6 +12,7 @@ import { Toast } from './self contained/Toast'
 import { localize } from './Lang'
 import { waitSec } from './self contained/Utils'
 import { PlayerStorage } from './PlayerStorage'
+import { PopupManager } from './self contained/PopupManager'
 const { ccclass, property } = _decorator
 
 @ccclass('Tutor')
@@ -53,7 +54,7 @@ export class Tutor extends PipelineComponent {
         this.wrongsToTrace = 3
         this.level = level
 
-        if (level.index < 2) {
+        if (level.index < 2 && PopupManager.empty()) {
             if (level.index == 0)
                 waitSec(1)
                     .then(() => Toast.push(localize("TutorTrace")))

@@ -46,6 +46,14 @@ const Translations: { [key in string]: { [key in Locale]: string } } = {
         ["ru"]: "Проведите по буквам, чтобы выделить слово",
         ["en"]: "Swipe the letters to enter the word",
     },
+    ["ForAdv"]: {
+        ["ru"]: "за рекл",
+        ["en"]: "for adv",
+    },
+    ["Hint"]: {
+        ["ru"]: "+буква",
+        ["en"]: "+letter",
+    },
     ["ru"]: { ["ru"]: "Русский", ["en"]: "Русский" },
     ["en"]: { ["ru"]: "English", ["en"]: "English" },
 }
