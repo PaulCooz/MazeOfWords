@@ -1,4 +1,4 @@
-import { _decorator, Color, Component, Label, Sprite, Vec3 } from 'cc'
+import { _decorator, Color, Component, Label, Sprite, Tween, tween, Vec3 } from 'cc'
 import { Direction } from './Common'
 const { ccclass, property } = _decorator
 
@@ -9,6 +9,7 @@ enum State {
 }
 
 const ColorHinted = new Color(180, 140, 255)
+const ArrowColor = Color.BLACK
 
 @ccclass('GridCell')
 export class GridCell extends Component {
@@ -65,13 +66,17 @@ export class GridCell extends Component {
         this.j = j
     }
 
-    public setHinted(direction: Direction) {
+    public setHinted(direction: Direction, animated = false) {
         this.hinted = true
         this.hintedDir = direction
-        this.refreshDirection()
 
-        if (!this.pressed)
-            this.background.color = this.idleColor
+        if (animated)
+            this.animateHint(direction)
+        else {
+            this.refreshDirection()
+            if (!this.pressed)
+                this.background.color = this.idleColor
+        }
     }
 
     public setInputDirection(direction: Direction) {
@@ -79,12 +84,37 @@ export class GridCell extends Component {
         this.refreshDirection()
     }
 
+    private animateHint(direction: Direction) {
+        for (const sprite of this.hintedDirection) {
+            Tween.stopAllByTarget(sprite)
+            sprite.color = Color.TRANSPARENT
+        }
+
+        if (direction != null) {
+            tween(this.hintedDirection[direction])
+                .to(0.1, { color: ArrowColor })
+                .start()
+        }
+
+        if (!this.pressed) {
+            Tween.stopAllByTarget(this.background)
+            tween(this.background)
+                .to(0.1, { color: ColorHinted })
+                .start()
+        }
+    }
+
     private refreshDirection() {
-        for (const sprite of this.hintedDirection)
-            sprite.node.active = false
+        for (const sprite of this.hintedDirection) {
+            Tween.stopAllByTarget(sprite)
+            sprite.color = Color.TRANSPARENT
+        }
 
         const direction = this.inputDir ?? (this.hinted ? this.hintedDir : undefined)
-        if (direction != null)
-            this.hintedDirection[direction].node.active = true
+        if (direction != null) {
+            tween(this.hintedDirection[direction])
+                .to(0.1, { color: ArrowColor })
+                .start()
+        }
     }
 }

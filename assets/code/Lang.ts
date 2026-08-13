@@ -42,6 +42,10 @@ const Translations: { [key in string]: { [key in Locale]: string } } = {
         ["ru"]: "Нет монет. Вы можете получить их за рекламу",
         ["en"]: "No coins. You can get them for advertising",
     },
+    ["TutorTrace"]: {
+        ["ru"]: "Проведите по буквам, чтобы выделить слово",
+        ["en"]: "Swipe the letters to enter the word",
+    },
     ["ru"]: { ["ru"]: "Русский", ["en"]: "Русский" },
     ["en"]: { ["ru"]: "English", ["en"]: "English" },
 }

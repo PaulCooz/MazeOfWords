@@ -1,5 +1,5 @@
-import { _decorator, Component, Label, Sprite, Tween, tween, Widget } from 'cc'
-import { labelStringTween, toPromise, waitSec } from './Utils'
+import { _decorator, Component, Label, Tween, tween, Widget } from 'cc'
+import { labelStringTween, toPromise } from './Utils'
 const { ccclass, property } = _decorator
 
 const ShowTop = 15, HideTop = -160

@@ -66,10 +66,15 @@ export class Hint extends PipelineComponent {
         }
 
         const cell = this.grid.getWordCell(wordIndex)
-        await toPromise(this.coins.subCoin(cell.node.worldPosition, 0.1, Config.hintCost))
-        this.level.openLetterIndexes.push(wordIndex)
+        await toPromise(this.coins.subCoin(
+            cell.node.worldPosition, 0.1,
+            Config.hintCost,
+            () => {
+                this.level.openLetterIndexes.push(wordIndex)
+                cell.setHinted(this.level.directionNextTo(wordIndex), true)
+            }
+        ))
 
-        cell.setHinted(this.level.directionNextTo(wordIndex))
         this.node.dispatchEvent(new OpenedLetterEvent())
 
         this.busy = false

@@ -1,29 +1,16 @@
 import { _decorator, math } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
-import { Hint } from './Hint'
 import { Coins } from './Coins'
-import { Toast } from './self contained/Toast'
-import { localize } from './Lang'
 import { showRewardedVideo } from './self contained/Yandex'
 import { Config } from './Config'
 const { ccclass, property } = _decorator
 
 @ccclass('RewardedAd')
 export class RewardedAd extends PipelineComponent {
-    @property(Hint)
-    hint: Hint
     @property(Coins)
     coins: Coins
 
     private busy = false
-
-    public awake(): void {
-        this.hint.onNoCoins.append(this.hintToSelf, this)
-    }
-
-    private hintToSelf() {
-        Toast.push(localize("NoCoinsForHint"))
-    }
 
     public async onClick() {
         if (this.busy)

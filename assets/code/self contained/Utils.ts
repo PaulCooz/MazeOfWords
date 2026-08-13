@@ -1,4 +1,5 @@
-import { Color, Label, math, Tween, tween } from "cc"
+import { Color, Label, math, Node, Tween, tween } from "cc"
+import { Curve, CurveKind } from "./Curve"
 
 export function withA(alpha: number, color: Color) {
     const n = color.clone()
@@ -48,6 +49,13 @@ function morphString(from: string, to: string, ratio: number) {
     for (let i = 0; i < Math.round(math.lerp(from.length, to.length, ratio)); i++)
         out += (i < reveal ? to[i] : from[i]) ?? ""
     return out
+}
+
+export function tracePathTween(node: Node, path: Node[], duration: number, kind: CurveKind = "Catmull-Rom") {
+    const curve = new Curve(path.map(p => p.worldPosition), kind)
+    return tween(node).to(duration, {}, {
+        onUpdate: (target, ratio) => target.worldPosition = curve.pointAt(ratio)
+    })
 }
 
 export function toPromise(tween: Tween): Promise<void> {

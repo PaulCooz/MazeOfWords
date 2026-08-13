@@ -61,15 +61,15 @@ export class Coins extends PipelineComponent {
         }
     }
 
-    public addCoin(from: Vec3, delay: number, amount = 1) {
-        return this.flyCoinFromTo(from, this.coinIcon.node.worldPosition, delay, amount)
+    public addCoin(from: Vec3, delay: number, amount = 1, beforeHide?: () => void) {
+        return this.flyCoinFromTo(from, this.coinIcon.node.worldPosition, delay, amount, beforeHide)
     }
 
-    public subCoin(to: Vec3, delay: number, amount = 1) {
-        return this.flyCoinFromTo(this.coinIcon.node.worldPosition, to, delay, -amount)
+    public subCoin(to: Vec3, delay: number, amount = 1, beforeHide?: () => void) {
+        return this.flyCoinFromTo(this.coinIcon.node.worldPosition, to, delay, -amount, beforeHide)
     }
 
-    private flyCoinFromTo(from: Vec3, to: Vec3, delay: number, inc: number) {
+    private flyCoinFromTo(from: Vec3, to: Vec3, delay: number, inc: number, beforeHide?: () => void) {
         const coin = instantiate(this.coinPrefab)
         coin.setParent(this.topUI.node)
         coin.worldPosition = from
@@ -98,7 +98,10 @@ export class Coins extends PipelineComponent {
                     )
                 },
             })
-            .call(() => PlayerStorage.coins.value += inc)
+            .call(() => {
+                PlayerStorage.coins.value += inc
+                beforeHide?.()
+            })
             .to(0.2, { scale: Vec3.ZERO }, { easing: 'backIn' })
             .destroySelf()
             .start()

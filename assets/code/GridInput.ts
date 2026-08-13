@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, Color, Input, input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
+import { _decorator, AudioClip, Canvas, Color, Input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
 import { Grid } from './Grid'
 import { PipelineComponent } from './PipelineComponent'
 import { Level } from './Level'
@@ -26,6 +26,9 @@ export class GridInput extends PipelineComponent {
     @property(Label)
     wordLabel: Label
 
+    @property(Canvas)
+    canvas: Canvas
+
     @property([AudioClip])
     audioClips: AudioClip[] = []
 
@@ -52,8 +55,7 @@ export class GridInput extends PipelineComponent {
     awake() {
         this.wordLabel.string = ""
 
-        this.node.on(NodeEventType.MOUSE_UP, this.mouseUp, this)
-        input.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
+        this.canvas.node.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
 
         this.wordResToClip = {
             ["wrong"]: this.wordWrongClips,
