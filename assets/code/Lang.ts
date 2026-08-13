@@ -46,6 +46,10 @@ const Translations: { [key in string]: { [key in Locale]: string } } = {
         ["ru"]: "Проведите по буквам, чтобы выделить слово",
         ["en"]: "Swipe the letters to enter the word",
     },
+    ["TutorBonus"]: {
+        ["ru"]: "Слова от 4 или более символов дают бонусную монету",
+        ["en"]: "Words of 4 or more characters award a bonus coin",
+    },
     ["ForAdv"]: {
         ["ru"]: "за рекл",
         ["en"]: "for adv",

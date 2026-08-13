@@ -94,6 +94,16 @@ export function showRewardedVideo(): Promise<boolean> {
     })
 }
 
+export async function setLeaderboardScore(name: string, score: number) {
+    try {
+        if (!globalThis.YG_Player.isAuthorized())
+            return
+        await globalThis.YG.leaderboards.setScore(name, score)
+    } catch (e) {
+        console.error(e)
+    }
+}
+
 function installMock() {
     mockLog("[Yandex] SDK not found, using mock")
 
@@ -101,6 +111,7 @@ function installMock() {
     globalThis.YG_Player = {
         getData: () => Promise.resolve({}),
         setData: (_data: object) => Promise.resolve(),
+        isAuthorized: () => true,
     }
     globalThis.YG = {
         features: {
@@ -123,6 +134,12 @@ function installMock() {
         },
         on: (_event: string, _listener: Function) => { },
         getFlags: (params?: { defaultFlags?: object }) => Promise.resolve({ ...(params?.defaultFlags ?? {}) }),
+        leaderboards: {
+            setScore: (name: string, score: number) => {
+                mockLog("[Yandex] setScore", name, score)
+                return Promise.resolve()
+            },
+        },
         environment: { i18n: { lang: globalThis.YG_Lang } },
     }
 }

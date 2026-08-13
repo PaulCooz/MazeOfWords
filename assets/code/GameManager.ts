@@ -6,7 +6,7 @@ import { LevelChangeEvent, LevelCompleteEvent, Locale, OpenedLetterEvent } from 
 import { Level } from './level/Level'
 import { Config } from './Config'
 import { CloudSave } from './CloudSave'
-import { initYandex, loadingReady, setGamePaused, yandexLang } from './self contained/Yandex'
+import { initYandex, loadingReady, setGamePaused, setLeaderboardScore, yandexLang } from './self contained/Yandex'
 import { PopupManager } from './self contained/PopupManager'
 import { Toast } from './self contained/Toast'
 const { ccclass, property } = _decorator
@@ -50,6 +50,7 @@ export class GameManager extends Component {
         }
 
         loadingReady()
+        submitLevelScore()
         await this.startLevel()
     }
 
@@ -93,6 +94,7 @@ export class GameManager extends Component {
         PlayerStorage.setPrevLevel(locale, PlayerStorage.getCurrLevel(locale))
         PlayerStorage.levelIndex.value++
         PlayerStorage.setCurrLevel(locale, undefined)
+        submitLevelScore()
 
         await this.startLevel()
     }
@@ -100,4 +102,8 @@ export class GameManager extends Component {
     private checkPause() {
         setGamePaused(!this.playing || !PopupManager.empty())
     }
+}
+
+function submitLevelScore() {
+    setLeaderboardScore("level", PlayerStorage.levelIndex.value + 1)
 }

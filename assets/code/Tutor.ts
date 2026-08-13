@@ -61,6 +61,10 @@ export class Tutor extends PipelineComponent {
 
             this.showTrace()
         }
+        if (level.index == 4) {
+            waitSec(1)
+                .then(() => Toast.push(localize("TutorBonus")))
+        }
         if (level.index < 5)
             this.gridInput.onWordEnter.append(this.onWord, this)
     }
