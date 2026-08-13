@@ -57,6 +57,9 @@ export class Grid extends PipelineComponent {
     }
 
     private resizeCells() {
+        if (!this.level)
+            return
+
         let gridSize = this.aspectRatio.UITransform.contentSize
 
         const ly = this.layout

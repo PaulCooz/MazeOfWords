@@ -20,7 +20,7 @@ async function checkWords(locale: string) {
         for (let i = 0; i <= MaxWordLen; i++)
             wordsByLen.push([])
 
-        for (const word of text.split('\n')) {
+        for (const word of text.split(/\r?\n/)) {
             const len = word.length
             if (len == 0) // the last one
                 continue
