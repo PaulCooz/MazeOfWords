@@ -1,5 +1,5 @@
-import { Direction, Locale } from "./Common"
-import { PlayerStorage } from "./PlayerStorage"
+import { Direction, Locale } from "../Common"
+import { PlayerStorage } from "../PlayerStorage"
 
 export interface LevelData {
     index: number

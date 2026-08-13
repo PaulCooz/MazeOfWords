@@ -1,6 +1,6 @@
 import { Locale } from "./Common"
 import { Config } from "./Config"
-import { LevelData } from "./Level"
+import { LevelData } from "./level/Level"
 import { clearAllStorage, StorageValue } from "./self contained/Storage"
 
 type LevelType = { [locale in Locale]?: LevelData }

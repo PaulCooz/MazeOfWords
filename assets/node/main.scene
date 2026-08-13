@@ -1196,6 +1196,28 @@
     "gridInput": {
       "__id__": 40
     },
+    "audioClips": [
+      {
+        "__uuid__": "f32b8f81-755e-47a1-b36b-6410af8876fb",
+        "__expectedType__": "cc.AudioClip"
+      },
+      {
+        "__uuid__": "06091c4d-d5dd-4e1b-94eb-0ec758d7d1ae",
+        "__expectedType__": "cc.AudioClip"
+      },
+      {
+        "__uuid__": "29fb2135-8e25-41dc-baea-0b014d164b29",
+        "__expectedType__": "cc.AudioClip"
+      },
+      {
+        "__uuid__": "9a8ac186-c8b9-472d-918a-9576417d5faf",
+        "__expectedType__": "cc.AudioClip"
+      },
+      {
+        "__uuid__": "9ebf6bde-aa92-45ca-a104-78832e4da1e0",
+        "__expectedType__": "cc.AudioClip"
+      }
+    ],
     "_id": "04dj+2XppKQJ5y+5QxuYH7"
   },
   {

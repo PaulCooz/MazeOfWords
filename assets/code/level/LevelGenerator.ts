@@ -1,10 +1,10 @@
 import { TextAsset } from "cc"
-import { Rand } from "./self contained/Rand"
-import { loadBundle, loadFile } from "./self contained/Engine"
+import { loadBundle, loadFile } from "../self contained/Engine"
+import { Locale } from "../Common"
+import { Config } from "../Config"
+import { PlayerStorage } from "../PlayerStorage"
+import { Rand } from "../self contained/Rand"
 import { Level } from "./Level"
-import { PlayerStorage } from "./PlayerStorage"
-import { Locale } from "./Common"
-import { Config } from "./Config"
 
 const MaxWordLen = 25
 

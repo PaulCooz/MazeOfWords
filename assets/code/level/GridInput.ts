@@ -1,13 +1,13 @@
-import { _decorator, AudioClip, Canvas, Color, Input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
+import { _decorator, AudioClip, Canvas, Color, input, Input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
 import { Grid } from './Grid'
-import { PipelineComponent } from './PipelineComponent'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
+import { PipelineComponent } from '../PipelineComponent'
+import { Direction, LevelCompleteEvent, WordResult } from '../Common'
+import { Delegate } from '../self contained/Delegate'
+import { Audio } from '../Audio'
 import { isWordExist } from './LevelGenerator'
-import { toPromise } from './self contained/Utils'
-import { Direction, LevelCompleteEvent, WordResult } from './Common'
-import { Audio } from './Audio'
-import { Delegate } from './self contained/Delegate'
+import { toPromise } from '../self contained/Utils'
 const { ccclass, property } = _decorator
 
 const SelectScale = 0.95
@@ -55,6 +55,7 @@ export class GridInput extends PipelineComponent {
     awake() {
         this.wordLabel.string = ""
 
+        input.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
         this.canvas.node.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
 
         this.wordResToClip = {

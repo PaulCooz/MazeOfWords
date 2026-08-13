@@ -1,6 +1,6 @@
 import { _decorator } from 'cc'
 import { RevealButton } from './RevealButton'
-import { Level } from './Level'
+import { Level } from './level/Level'
 import { Locale, Locales } from './Common'
 import { PopupManager } from './self contained/PopupManager'
 import { DefinitionPopup } from './DefinitionPopup'

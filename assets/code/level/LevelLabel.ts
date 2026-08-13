@@ -1,8 +1,8 @@
 import { _decorator, Label } from 'cc'
-import { PipelineComponent } from './PipelineComponent'
+import { PipelineComponent } from '../PipelineComponent'
+import { localize } from '../Lang'
+import { PlayerStorage } from '../PlayerStorage'
 import { Level } from './Level'
-import { localize } from './Lang'
-import { PlayerStorage } from './PlayerStorage'
 const { ccclass, property } = _decorator
 
 @ccclass('LevelLabel')

@@ -1,6 +1,6 @@
 import { _decorator, Button, Tween, tween, Vec3, Widget } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
-import { Level } from './Level'
+import { Level } from './level/Level'
 const { ccclass, property } = _decorator
 
 @ccclass('RevealButton')

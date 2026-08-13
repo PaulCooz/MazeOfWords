@@ -1,13 +1,13 @@
-import { _decorator, Canvas, instantiate, NodeEventType, Prefab, UITransform } from 'cc'
+import { _decorator, Canvas, Input, input, instantiate, NodeEventType, Prefab, UITransform } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
-import { Grid } from './Grid'
-import { GridInput } from './GridInput'
+import { Grid } from './level/Grid'
+import { GridInput } from './level/GridInput'
 import { Hint } from './Hint'
 import { RewardedAd } from './RewardedAd'
 import { TutorFinger } from './TutorFinger'
-import { Level } from './Level'
+import { Level } from './level/Level'
 import { WordResult } from './Common'
-import { GridCell } from './GridCell'
+import { GridCell } from './level/GridCell'
 import { Toast } from './self contained/Toast'
 import { localize } from './Lang'
 import { waitSec } from './self contained/Utils'
@@ -39,7 +39,8 @@ export class Tutor extends PipelineComponent {
     private pointingAd = false
 
     awake() {
-        this.canvas.node.on(NodeEventType.MOUSE_DOWN, this.dismiss, this)
+        input.on(Input.EventType.MOUSE_DOWN, this.dismiss, this)
+        this.canvas.node.on(Input.EventType.MOUSE_DOWN, this.dismiss, this)
 
         this.hint.onNoCoins.append(this.onNoCoins, this)
         PlayerStorage.coins.onChange.append(this.onCoins, this)

@@ -1,13 +1,14 @@
-import { _decorator, instantiate, Label, math, Prefab, Sprite, Tween, tween, UITransform, Vec3 } from 'cc'
+import { _decorator, AudioClip, instantiate, Label, math, Prefab, Sprite, Tween, tween, UITransform, Vec3 } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { PlayerStorage } from './PlayerStorage'
-import { GridInput } from './GridInput'
+import { GridInput } from './level/GridInput'
 import { WordResult } from './Common'
-import { GridCell } from './GridCell'
+import { GridCell } from './level/GridCell'
 import { Config } from './Config'
-import { Level } from './Level'
+import { Level } from './level/Level'
 import { labelCounterTween } from './self contained/Utils'
 import { Rand } from './self contained/Rand'
+import { Audio } from './Audio'
 const { ccclass, property } = _decorator
 
 @ccclass('Coins')
@@ -24,12 +25,17 @@ export class Coins extends PipelineComponent {
     @property(GridInput)
     gridInput: GridInput
 
+    @property([AudioClip])
+    audioClips: AudioClip[] = []
+
     private level: Level
     private rand: Rand
+    private prevCoins: number
 
     awake() {
         this.rand = new Rand()
-        this.label.string = PlayerStorage.coins.value.toString()
+        this.prevCoins = PlayerStorage.coins.value
+        this.label.string = this.prevCoins.toString()
 
         PlayerStorage.coins.onChange.append(this.coinsChanged, this)
         this.gridInput.onWordEnter.append(this.tryReward, this)
@@ -40,8 +46,19 @@ export class Coins extends PipelineComponent {
     }
 
     private coinsChanged(newValue: number) {
+        const diff = Math.abs(newValue - this.prevCoins)
+        if (diff == 0)
+            return
+        this.prevCoins = newValue
+
         Tween.stopAllByTarget(this.label)
-        labelCounterTween(this.label, newValue).start()
+
+        const duration = (diff - 1) / 30
+        if (duration <= 0)
+            this.label.string = newValue.toString()
+        else
+            labelCounterTween(this.label, newValue, duration).start()
+
     }
 
     private tryReward(tuple: [result: WordResult, word: string, cells: GridCell[]]) {
@@ -75,6 +92,9 @@ export class Coins extends PipelineComponent {
         coin.worldPosition = from
         coin.scale = Vec3.ZERO
 
+        if (inc < 0)
+            Audio.playSoundRand(this.audioClips, 0.1)
+
         // curved by midpoint + normal
         const l = this.rand.range(0.1, 0.3)
         const sub = new Vec3(to.x - from.x, to.y - from.y)
@@ -100,6 +120,8 @@ export class Coins extends PipelineComponent {
             })
             .call(() => {
                 PlayerStorage.coins.value += inc
+                if (inc > 0)
+                    Audio.playSoundRand(this.audioClips, 0.1)
                 beforeHide?.()
             })
             .to(0.2, { scale: Vec3.ZERO }, { easing: 'backIn' })

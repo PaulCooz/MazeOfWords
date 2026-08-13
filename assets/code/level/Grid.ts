@@ -1,6 +1,6 @@
 import { _decorator, instantiate, Layout, NodeEventType, Prefab, Size, Widget } from 'cc'
-import { PipelineComponent } from './PipelineComponent'
-import { AspectRatio } from './self contained/AspectRatio'
+import { PipelineComponent } from '../PipelineComponent'
+import { AspectRatio } from '../self contained/AspectRatio'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
 const { ccclass, property } = _decorator

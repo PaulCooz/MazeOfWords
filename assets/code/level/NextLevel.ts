@@ -1,7 +1,7 @@
 import { _decorator } from 'cc'
-import { RevealButton } from './RevealButton'
-import { LevelChangeEvent } from './Common'
-import { Adv } from './Adv'
+import { RevealButton } from '../RevealButton'
+import { LevelChangeEvent } from '../Common'
+import { Adv } from '../Adv'
 const { ccclass } = _decorator
 
 @ccclass('NextLevel')

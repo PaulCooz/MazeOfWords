@@ -1,5 +1,5 @@
 import { _decorator, Color, Component, Label, Sprite, Tween, tween, Vec3 } from 'cc'
-import { Direction } from './Common'
+import { Direction } from '../Common'
 const { ccclass, property } = _decorator
 
 enum State {
