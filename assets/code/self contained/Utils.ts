@@ -6,17 +6,19 @@ export function withA(alpha: number, color: Color) {
     n.a = alpha
     return n
 }
-
 export function withX<T extends { clone: () => T, x: number }>(x: number, v: T): T {
     const n = v.clone()
     n.x = x
     return n
 }
-
 export function withY<T extends { clone: () => T, y: number }>(y: number, v: T): T {
     const n = v.clone()
     n.y = y
     return n
+}
+
+export function rangeInt(from: number, to: number) {
+    return Array.from({ length: to - from }, (_, i) => i + from)
 }
 
 export function labelCounterTween(label: Label, value: number, duration: number = 0.2) {

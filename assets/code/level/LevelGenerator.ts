@@ -61,49 +61,65 @@ function nextWord(locale: Locale, index: number) {
     }
 
     const wordIndex = lenToWordIndex[bestSize] ?? 0
-    return wordsByLen[bestSize][wordIndex % wordsByLen.length]
+    const bucket = wordsByLen[bestSize]
+    return bucket[wordIndex % bucket.length]
 }
 
 function nextScheme(locale: Locale, height: number, width: number, index: number) {
-    const rand = new Rand(index)
-    const path = [], used = {}
-    const stopWord = "found"
+    const schemes = allSchemes(height, width)
+    const prevLevel = PlayerStorage.getPrevLevel(locale)
+    const pi = prevLevel ? Math.trunc(prevLevel.scheme[0] / prevLevel.width) : -1
+    const pj = prevLevel ? prevLevel.scheme[0] % prevLevel.width : -1
+
+    const start = index % schemes.length
+    for (let n = 0; n < schemes.length; n++) {
+        const path = schemes[(start + n) % schemes.length]
+        if (Math.trunc(path[0] / width) != pi || path[0] % width != pj)
+            return path
+    }
+    return schemes[start]
+}
+
+const schemeCache: { [key: string]: number[][] } = {}
+function allSchemes(height: number, width: number) {
+    const key = `${height}x${width}`
+    if (schemeCache[key])
+        return schemeCache[key]
+
+    const n = height * width
+    const path = [], found = []
+    const used = new Uint8Array(n), steps = [[-1, 0], [+1, 0], [0, -1], [0, +1]]
+
     const rec = (i: number, j: number) => {
         const idx = i * width + j
-        used[idx] = true
+        used[idx] = 1
         path.push(idx)
 
-        if (path.length == height * width)
-            throw stopWord
-
-        const steps = [[-1, 0], [+1, 0], [0, -1], [0, +1]]
-        rand.shuffle(steps)
-        for (const step of steps) {
-            const ni = i + step[0], nj = j + step[1]
-            if (0 <= ni && ni < height && 0 <= nj && nj < width && !used[ni * width + nj])
-                rec(ni, nj)
+        if (path.length == n)
+            found.push(Array.from(path))
+        else {
+            for (const step of steps) {
+                const ni = i + step[0], nj = j + step[1]
+                if (0 <= ni && ni < height && 0 <= nj && nj < width && !used[ni * width + nj])
+                    rec(ni, nj)
+            }
         }
 
-        used[idx] = undefined
+        used[idx] = 0
         path.pop()
     }
 
-    try {
-        const prevLevel = PlayerStorage.getPrevLevel(locale),
-            pi = prevLevel ? Math.trunc(prevLevel.scheme[0] / prevLevel.width) : -1,
-            pj = prevLevel ? prevLevel.scheme[0] % prevLevel.width : -1
-        while (true) { // TODO optimization!
-            const i = rand.rangeInt(0, height), j = rand.rangeInt(0, width)
-            if (pi == i && pj == j)
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            if (n % 2 == 1 && (i + j) % 2 == 1)
                 continue
             rec(i, j)
         }
-    } catch (e) {
-        if (e != stopWord)
-            console.error(e)
     }
 
-    return path
+    new Rand(height * 31 + width).shuffle(found)
+    schemeCache[key] = found
+    return found
 }
 
 export async function createLevel(locale: Locale, index: number) {

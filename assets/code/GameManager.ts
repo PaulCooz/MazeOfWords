@@ -24,8 +24,6 @@ export class GameManager extends Component {
     private playing = false
 
     async onLoad() {
-        PlayerStorage.clearAll() // for debug
-
         this.popupManager.setup()
         this.toast.setup()
 

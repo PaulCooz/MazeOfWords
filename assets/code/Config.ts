@@ -14,7 +14,7 @@ export class Config {
         { from: 2, to: 9, wordLength: [5, 8] },
         { from: 9, to: 15, wordLength: [7, 9] },
         { from: 15, to: 20, wordLength: [9, 14] },
-        { from: 20, to: -1, wordLength: [13, 25] },
+        { from: 20, to: -1, wordLength: [14, 25] },
     ]
 
     static async load() {
