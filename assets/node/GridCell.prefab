@@ -1070,6 +1070,9 @@
     "background": {
       "__id__": 44
     },
+    "UITransform": {
+      "__id__": 42
+    },
     "hintedDirection": [
       {
         "__id__": 13

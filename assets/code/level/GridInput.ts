@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, Canvas, Color, input, Input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
+import { _decorator, AudioClip, Canvas, Color, EventTouch, input, Input, Label, NodeEventType, tween, Tween, UITransform, Vec3 } from 'cc'
 import { Grid } from './Grid'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
@@ -55,8 +55,12 @@ export class GridInput extends PipelineComponent {
     awake() {
         this.wordLabel.string = ""
 
-        input.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
-        this.canvas.node.on(Input.EventType.MOUSE_UP, this.mouseUp, this)
+        input.on(Input.EventType.TOUCH_END, this.touchEnd, this)
+        input.on(Input.EventType.TOUCH_CANCEL, this.touchEnd, this)
+        input.on(Input.EventType.TOUCH_MOVE, this.touchMove, this)
+        this.canvas.node.on(Input.EventType.TOUCH_END, this.touchEnd, this)
+        this.canvas.node.on(Input.EventType.TOUCH_CANCEL, this.touchEnd, this)
+        this.canvas.node.on(Input.EventType.TOUCH_MOVE, this.touchMove, this)
 
         this.wordResToClip = {
             ["wrong"]: this.wordWrongClips,
@@ -82,17 +86,34 @@ export class GridInput extends PipelineComponent {
         if (cell.empty)
             return
 
-        cell.node.on(NodeEventType.MOUSE_DOWN, () => this.mouseDown(cell), this)
-        cell.node.on(NodeEventType.MOUSE_ENTER, () => this.enter(cell), this)
+        cell.node.on(NodeEventType.TOUCH_START, () => this.touch(cell), this)
+        cell.node.on(NodeEventType.TOUCH_MOVE, this.touchMove, this)
+        cell.node.on(NodeEventType.TOUCH_END, this.touchEnd, this)
+        cell.node.on(NodeEventType.TOUCH_CANCEL, this.touchEnd, this)
     }
 
-    private mouseDown(cell: GridCell) {
+    private touch(cell: GridCell) {
         if (this.busy || this.completed)
             return
 
         this.pressing = true
         this.clearPath(false)
         this.enter(cell)
+    }
+
+    private touchMove(event: EventTouch) {
+        if (!this.pressing || this.busy || this.completed)
+            return
+
+        const loc = event.getLocation()
+        for (const cell of this.grid.cells) {
+            if (cell.empty)
+                continue
+            if (cell.UITransform.hitTest(loc)) {
+                this.enter(cell)
+                return
+            }
+        }
     }
 
     private enter(cell: GridCell) {
@@ -128,7 +149,7 @@ export class GridInput extends PipelineComponent {
         this.selectCell(cell)
     }
 
-    private async mouseUp() {
+    private async touchEnd() {
         if (!this.pressing || this.busy)
             return
 

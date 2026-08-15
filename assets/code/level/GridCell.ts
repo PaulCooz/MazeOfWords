@@ -1,4 +1,4 @@
-import { _decorator, Color, Component, Label, Sprite, Tween, tween, Vec3 } from 'cc'
+import { _decorator, Color, Component, Label, Sprite, Tween, tween, UITransform, Vec3 } from 'cc'
 import { Direction } from '../Common'
 const { ccclass, property } = _decorator
 
@@ -17,6 +17,8 @@ export class GridCell extends Component {
     private label: Label
     @property(Sprite)
     background: Sprite
+    @property(UITransform)
+    UITransform: UITransform
 
     @property([Sprite])
     hintedDirection: Sprite[] = []

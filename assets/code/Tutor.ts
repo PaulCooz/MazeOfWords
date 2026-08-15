@@ -1,4 +1,4 @@
-import { _decorator, Canvas, Input, input, instantiate, NodeEventType, Prefab, UITransform } from 'cc'
+import { _decorator, Canvas, Input, input, instantiate, Prefab, UITransform } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { Grid } from './level/Grid'
 import { GridInput } from './level/GridInput'
@@ -40,8 +40,8 @@ export class Tutor extends PipelineComponent {
     private pointingAd = false
 
     awake() {
-        input.on(Input.EventType.MOUSE_DOWN, this.dismiss, this)
-        this.canvas.node.on(Input.EventType.MOUSE_DOWN, this.dismiss, this)
+        input.on(Input.EventType.TOUCH_START, this.dismiss, this)
+        this.canvas.node.on(Input.EventType.TOUCH_START, this.dismiss, this)
 
         this.hint.onNoCoins.append(this.onNoCoins, this)
         PlayerStorage.coins.onChange.append(this.onCoins, this)
