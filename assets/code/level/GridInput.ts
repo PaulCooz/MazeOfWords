@@ -47,7 +47,7 @@ export class GridInput extends PipelineComponent {
     private path: GridCell[] = []
 
     get word() {
-        return this.path.map(c => c.letter.string).join('')
+        return this.path.map(c => c.originalLetter).join('')
     }
 
     readonly onWordEnter = new Delegate<[result: WordResult, word: string, cells: GridCell[]]>()
@@ -164,10 +164,11 @@ export class GridInput extends PipelineComponent {
     }
 
     private evaluateWord(word: string): WordResult {
-        if (word == this.level.word)
+        const lw = this.level.word
+        if (word == lw)
             return 'correct'
         if (isWordExist(word))
-            return 'bonus'
+            return word.length == lw.length ? 'correct' : 'bonus'
         return 'wrong'
     }
 
@@ -190,7 +191,7 @@ export class GridInput extends PipelineComponent {
     }
 
     private updateLabel() {
-        this.wordLabel.string = this.word
+        this.wordLabel.string = this.word.toUpperCase()
     }
 
     private playSound() {

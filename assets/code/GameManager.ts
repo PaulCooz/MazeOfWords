@@ -47,9 +47,9 @@ export class GameManager extends Component {
             p.awake?.()
         }
 
-        loadingReady()
         submitLevelScore()
         await this.startLevel()
+        loadingReady()
     }
 
     private async startLevel() {

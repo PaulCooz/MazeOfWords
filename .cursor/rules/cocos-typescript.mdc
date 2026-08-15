@@ -27,16 +27,18 @@ If the console shows `Missing class: …` on Grid/Canvas, check **earlier** impo
 
 ## Assets and persistence
 
-- Dictionaries: Asset Bundle `bundle`, files `words_all_en` / `words_all_ru`.
+- Dictionaries: Asset Bundle `words` (`assets/level/words/`), files `words_all_en` / `words_all_ru`.
+- Music: Asset Bundle `music` (`assets/media/music/`); `Audio` shuffles and loops clips.
 - Prefer `StorageValue` for player progress; remove keys on `undefined` rather than storing `"undefined"`.
-- Tweens: prefer existing helpers (`toPromise` in Utils) for awaitable animations.
+- Tweens: prefer existing helpers (`toPromise`, `labelCounterTween`, `tracePathTween` in Utils).
 - `Rand`: mulberry32 state machine — never feed Cocos `pseudoRandom*` with consecutive integer seeds.
+- SFX: `Audio.playSound` / `playSoundRand` — do not add another audio singleton.
 
 ## Yandex / editor
 
 - Runtime SDK comes from `build-templates/web-mobile/index.ejs` (`YG`, `YG_Player`, `YG_Lang`).
 - Editor/preview without `sdk.js` → `Yandex.ts` mock (no real ads/cloud).
-- Do not create `.meta` or edit scenes/prefabs.
+- Do not create `.meta`. Scene/prefab edits only when wiring; keep diffs minimal.
 
 ## Editor packer
 

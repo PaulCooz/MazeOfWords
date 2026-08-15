@@ -1,6 +1,6 @@
 ---
 description: Level pipeline and event-driven gameplay flow
-globs: assets/code/*.ts
+globs: assets/code/**/*.ts
 alwaysApply: false
 ---
 
@@ -10,36 +10,37 @@ alwaysApply: false
 
 ## Boot order (keep thin)
 
-1. Init Yandex (`initYandex` — waits for `index.ejs` globals or installs editor mock)
+1. `PopupManager.setup` + `Toast.setup`, then init Yandex (`initYandex` — waits for `index.ejs` globals or installs editor mock)
 2. `Config.load` + `CloudSave.pull` (parallel)
 3. Apply Yandex language unless `PlayerStorage.langChosen`
-4. `CloudSave.startPushLoop`, pipeline `awake`, `LoadingAPI.ready`, first `levelStart`
+4. `CloudSave.startPushLoop`, pipeline `awake`, `LoadingAPI.ready`, `setLeaderboardScore("level", …)`, first `levelStart`
 
 ## Lifecycle contract
 
 1. **awake** — one-time wiring (listeners, hide UI). Called once from `GameManager.onLoad`.
-2. **levelStart(level)** — build/reset for a new `Level` (grid, input, labels, restore hints).
-3. **levelFinish** — react to main-word success (lock input, reveal next / definition buttons).
+2. **levelStart(level)** — build/reset for a new `Level` (grid, input, labels, restore hints). If `level.allLettersOpened`, the manager completes immediately.
+3. **levelFinish** — react to success (lock input, reveal next / definition buttons).
 
 Add a new feature by implementing the needed hooks and registering the component on the pipeline in the editor — do not hardcode peer references in `GameManager`.
 
 ## Cross-feature signals
 
-Use bubbling Cocos `Event` subclasses from `Common.ts` (e.g. `LevelCompleteEvent`, `LevelChangeEvent`, hint letter events). Dispatch from the feature node; `GameManager` listens on its node and drives the pipeline.
-
-Avoid direct `GameManager` imports from pipeline features.
+- **Bubbling events** from `Common.ts` (`LevelCompleteEvent`, `LevelChangeEvent`, `OpenedLetterEvent`) — dispatch from the feature node; `GameManager` drives the pipeline.
+- **Delegates** — local peer wiring (e.g. `GridInput.onWordEnter`, `Hint.onNoCoins`), editor `@property` references. Avoid `GameManager` imports from features.
 
 ## Level + persistence
 
-- `LevelGenerator.createLevel(locale, index)` builds or restores from **per-locale** `PlayerStorage.currLevels`.
+- `createLevel(locale, index)` builds or restores from **per-locale** `PlayerStorage.currLevels`. Word length follows `Config.levelProgression` (least-used length in the band; avoid the previous level’s length). Path schemes avoid the previous start cell.
 - Mid-level mutations (`openLetterIndexes`, `bonuses`) → `Level.saveAsCurr()`.
-- Empty in-progress caches may be dropped on language switch; progress with hints/bonuses is kept per locale.
+- Next level: stash curr → `prevLevels`, bump `levelIndex`, clear this locale’s curr cache, maybe interstitial, post leaderboard, `levelStart`.
+- Language switch keeps in-progress levels per locale and reloads.
 - `CloudSave` mirrors all of `localStorage` to Yandex `player.setData` / `getData`.
 
 ## UI / platform hooks
 
-- End-of-level buttons share `RevealButton` (Widget fix + scale show/hide): `NextLevel`, `Definition`.
+- End-of-level buttons share `RevealButton`: `NextLevel`, `Definition` (Wiktionary WebView if HEAD succeeded).
 - Popups go through `PopupManager`; open popups and “not playing” drive `setGamePaused` → GameplayAPI start/stop.
 - Toasts: `Toast.push(message)` (setup from `GameManager`); panel slides via Widget `top`; replace-in-place if another message arrives while visible.
+- Coins fly via `Coins.addCoin` / `subCoin`: first-time correct/bonus, rewarded video (`Config.rewardedCoins`), hint spend (`Config.hintCost`).
 - Fullscreen interstitial: `Adv.tryShowFullscreen` on next-level click, cooldown `Config.interCooldown` (from last fullscreen or session start — not rewarded).
-- Rewarded video: footer `RewardedAd` button; on success flies `Config.rewardedCoins` into the header counter.
+- Completing by hinting every letter is the same success path as tracing the main word.

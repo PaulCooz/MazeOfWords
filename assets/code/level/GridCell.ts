@@ -14,7 +14,7 @@ const ArrowColor = Color.BLACK
 @ccclass('GridCell')
 export class GridCell extends Component {
     @property(Label)
-    letter: Label
+    private label: Label
     @property(Sprite)
     background: Sprite
 
@@ -27,6 +27,8 @@ export class GridCell extends Component {
     private state: State
     private hintedDir: Direction
     private inputDir: Direction
+
+    public originalLetter: string
 
     i: number
     j: number
@@ -58,7 +60,8 @@ export class GridCell extends Component {
             this.node.scale = Vec3.ZERO
         } else {
             this.node.scale = this.defaultScale
-            this.letter.string = letter
+            this.originalLetter = letter
+            this.label.string = this.originalLetter.toUpperCase()
             this.background.color = this.defaultColor
         }
 
