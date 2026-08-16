@@ -1,4 +1,5 @@
-import { _decorator, AudioClip, Canvas, Color, EventTouch, input, Input, Label, NodeEventType, tween, Tween, UITransform, Vec3 } from 'cc'
+import { _decorator, AudioClip, Color, EventTouch, Input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
+import { globalInput } from '../self contained/GlobalInput'
 import { Grid } from './Grid'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
@@ -26,9 +27,6 @@ export class GridInput extends PipelineComponent {
     @property(Label)
     wordLabel: Label
 
-    @property(Canvas)
-    canvas: Canvas
-
     @property([AudioClip])
     audioClips: AudioClip[] = []
 
@@ -55,12 +53,9 @@ export class GridInput extends PipelineComponent {
     awake() {
         this.wordLabel.string = ""
 
-        input.on(Input.EventType.TOUCH_END, this.touchEnd, this)
-        input.on(Input.EventType.TOUCH_CANCEL, this.touchEnd, this)
-        input.on(Input.EventType.TOUCH_MOVE, this.touchMove, this)
-        this.canvas.node.on(Input.EventType.TOUCH_END, this.touchEnd, this)
-        this.canvas.node.on(Input.EventType.TOUCH_CANCEL, this.touchEnd, this)
-        this.canvas.node.on(Input.EventType.TOUCH_MOVE, this.touchMove, this)
+        globalInput.on(Input.EventType.TOUCH_END, this.touchEnd, this)
+        globalInput.on(Input.EventType.TOUCH_CANCEL, this.touchEnd, this)
+        globalInput.on(Input.EventType.TOUCH_MOVE, this.touchMove, this)
 
         this.wordResToClip = {
             ["wrong"]: this.wordWrongClips,

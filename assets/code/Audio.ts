@@ -1,4 +1,5 @@
-import { _decorator, AssetManager, AudioClip, AudioSource, Canvas, Input, input } from 'cc'
+import { _decorator, AssetManager, AudioClip, AudioSource, Input } from 'cc'
+import { globalInput } from './self contained/GlobalInput'
 import { PipelineComponent } from './PipelineComponent'
 import { waitSec } from './self contained/Utils'
 import { PlayerStorage } from './PlayerStorage'
@@ -14,8 +15,6 @@ export class Audio extends PipelineComponent {
     @property(AudioSource)
     music: AudioSource
 
-    @property(Canvas)
-    canvas: Canvas
     private bundle: AssetManager.Bundle
 
     private rand: Rand
@@ -40,16 +39,14 @@ export class Audio extends PipelineComponent {
             .then(b => this.bundle = b)
             .catch(console.error)
 
-        input.on(Input.EventType.TOUCH_END, this.tryStartMusic, this)
-        this.canvas.node.on(Input.EventType.TOUCH_END, this.tryStartMusic, this)
+        globalInput.on(Input.EventType.TOUCH_START, this.tryStartMusic, this)
     }
 
     private tryStartMusic() {
         if (this.bundle) {
             this.playMusic()
 
-            input.off(Input.EventType.TOUCH_END, this.tryStartMusic, this)
-            this.canvas.node.off(Input.EventType.TOUCH_END, this.tryStartMusic, this)
+            globalInput.off(Input.EventType.TOUCH_START, this.tryStartMusic, this)
         }
     }
 

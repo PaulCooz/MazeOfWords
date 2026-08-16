@@ -1,4 +1,5 @@
-import { _decorator, Canvas, Input, input, instantiate, Prefab, UITransform } from 'cc'
+import { _decorator, Input, instantiate, Prefab, UITransform } from 'cc'
+import { globalInput } from './self contained/GlobalInput'
 import { PipelineComponent } from './PipelineComponent'
 import { Grid } from './level/Grid'
 import { GridInput } from './level/GridInput'
@@ -30,8 +31,6 @@ export class Tutor extends PipelineComponent {
     hint: Hint
     @property(RewardedAd)
     rewardedAd: RewardedAd
-    @property(Canvas)
-    canvas: Canvas
 
     private finger: TutorFinger
     private level: Level
@@ -40,12 +39,10 @@ export class Tutor extends PipelineComponent {
     private pointingAd = false
 
     awake() {
-        input.on(Input.EventType.TOUCH_START, this.dismiss, this)
-        this.canvas.node.on(Input.EventType.TOUCH_START, this.dismiss, this)
+        globalInput.on(Input.EventType.TOUCH_START, this.dismiss, this)
 
         this.hint.onNoCoins.append(this.onNoCoins, this)
         PlayerStorage.coins.onChange.append(this.onCoins, this)
-        this.rewardedAd.onShow.append(this.dismiss, this)
     }
 
     levelStart(level: Level) {

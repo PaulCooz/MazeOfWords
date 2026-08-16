@@ -25,6 +25,7 @@ Ignore / never commit: `library/`, `temp/`, `local/`, `build/`, `profiles/` (reg
 ## Agent defaults
 
 - Prefer extending the **pipeline + events** pattern over new global singletons (`Audio` / `Toast` / `PopupManager` already exist).
+- Pointer events: `input.on(TOUCH_*)` is swallowed when any node hit-tests. Use `globalInput` (`self contained/GlobalInput`).
 - Keep `@ccclass` names stable; scene/prefab references use script UUID from `.meta`.
 - Do not invent class/method inventories in docs — describe flows and ownership instead.
 - Match existing style: optional chaining for pipeline hooks, `==` for nullish checks, minimal comments.
