@@ -3,6 +3,7 @@ import { PipelineComponent } from './PipelineComponent'
 import { Coins } from './Coins'
 import { showRewardedVideo } from './self contained/Yandex'
 import { Config } from './Config'
+import { Delegate } from './self contained/Delegate'
 const { ccclass, property } = _decorator
 
 @ccclass('RewardedAd')
@@ -14,6 +15,8 @@ export class RewardedAd extends PipelineComponent {
 
     private busy = false
 
+    onShow = new Delegate()
+
     public awake(): void {
         this.countLabel.string = `+${Config.rewardedCoins}`
     }
@@ -23,6 +26,7 @@ export class RewardedAd extends PipelineComponent {
             return
         this.busy = true
 
+        this.onShow.emit()
         if (await showRewardedVideo()) {
             const amount = Config.rewardedCoins
             const flyCount = Math.round(math.clamp(amount / 2, 1, 10))

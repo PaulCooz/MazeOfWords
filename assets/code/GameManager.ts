@@ -27,6 +27,9 @@ export class GameManager extends Component {
         this.popupManager.setup()
         this.toast.setup()
 
+        for (const p of this.pipeline)
+            p.load?.()
+
         this.node.on(LevelCompleteEvent.Name, this.levelComplete, this)
         this.node.on(LevelChangeEvent.Name, this.levelNext, this)
         this.node.on(OpenedLetterEvent.Name, this.openedLetter, this)
@@ -43,9 +46,8 @@ export class GameManager extends Component {
 
         PlayerStorage.lang.onChange.append(this.startLevel, this)
 
-        for (const p of this.pipeline) {
+        for (const p of this.pipeline)
             p.awake?.()
-        }
 
         submitLevelScore()
         await this.startLevel()

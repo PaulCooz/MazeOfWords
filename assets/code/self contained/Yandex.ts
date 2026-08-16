@@ -1,6 +1,6 @@
 import { Delegate } from "./Delegate"
 
-const SdkWaitMs = 15000
+const SdkWaitSec = 2
 const mockLog = (..._: any[]) => { } // swap to console.log when debugging SDK mock
 
 let yndxPause = false
@@ -10,10 +10,11 @@ export const onYaPause = new Delegate<boolean>()
 
 export async function initYandex() {
     if (globalThis.YaGames != undefined) { // sdk.js is connected
-        const deadline = Date.now() + SdkWaitMs
+        const deadline = Date.now() + SdkWaitSec * 1000
         while (globalThis.YG == undefined && Date.now() < deadline) // index.ejs is initializing
             await new Promise(resolve => setTimeout(resolve, 100))
     }
+
     if (globalThis.YG == undefined)
         installMock()
 
@@ -51,8 +52,14 @@ export function setGamePaused(paused: boolean) {
 }
 
 export function yandexLang(): string {
-    const lang = globalThis.YG_Lang ?? "en"
-    return ["ru", "be", "kk", "uk", "uz"].includes(lang) ? "ru" : lang
+    const map = {
+        ["ru"]: "ru",
+        ["be"]: "ru",
+        ["kk"]: "ru",
+        ["uk"]: "ru",
+        ["uz"]: "ru",
+    }
+    return map[globalThis.YG_Lang] ?? "en"
 }
 
 export function getFlags(): Promise<{ [key: string]: string }> {
@@ -77,7 +84,9 @@ export function showFullscreenAdv(): Promise<boolean> {
     return new Promise(resolve => {
         globalThis.YG.adv.showFullscreenAdv({
             callbacks: {
-                onClose: (wasShown: boolean) => resolve(wasShown)
+                onOpen: () => { },
+                onClose: (wasShown: boolean) => resolve(wasShown),
+                onError: console.error,
             }
         })
     })
@@ -87,8 +96,10 @@ export function showRewardedVideo(): Promise<boolean> {
     return new Promise(resolve => {
         globalThis.YG.adv.showRewardedVideo({
             callbacks: {
+                onOpen: () => { },
                 onRewarded: () => success = true,
-                onClose: (wasShown: boolean) => resolve(wasShown && success),
+                onClose: () => resolve(success),
+                onError: console.error,
             }
         })
     })
@@ -129,7 +140,7 @@ function installMock() {
             showRewardedVideo: (opts?: { callbacks?: AdvCallbacks }) => {
                 mockLog("[Yandex] rewarded video")
                 opts?.callbacks?.onRewarded?.()
-                opts?.callbacks?.onClose?.(true)
+                opts?.callbacks?.onClose?.()
             },
         },
         on: (_event: string, _listener: Function) => { },

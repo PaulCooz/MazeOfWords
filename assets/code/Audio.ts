@@ -1,4 +1,4 @@
-import { _decorator, AssetManager, AudioClip, AudioSource } from 'cc'
+import { _decorator, AssetManager, AudioClip, AudioSource, Canvas, Input, input } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { waitSec } from './self contained/Utils'
 import { PlayerStorage } from './PlayerStorage'
@@ -14,16 +14,22 @@ export class Audio extends PipelineComponent {
     @property(AudioSource)
     music: AudioSource
 
-    private static _instance: Audio
+    @property(Canvas)
+    canvas: Canvas
+    private bundle: AssetManager.Bundle
 
     private rand: Rand
+    private paused: boolean
 
-    public awake(): void {
+    private static _instance: Audio
+
+    public load(): void {
         Audio._instance = this
 
         PlayerStorage.sound.onChange.append(v => this.sound.volume = v)
         PlayerStorage.music.onChange.append(v => this.music.volume = v)
         onYaPause.append(paused => {
+            this.paused = paused
             this.sound.volume = paused ? 0 : 1
             this.music.volume = paused ? 0 : PlayerStorage.music.value
         })
@@ -31,8 +37,20 @@ export class Audio extends PipelineComponent {
         this.rand = new Rand(Date.now())
 
         loadBundle("music")
-            .then(b => this.playMusic(b))
+            .then(b => this.bundle = b)
             .catch(console.error)
+
+        input.on(Input.EventType.TOUCH_END, this.tryStartMusic, this)
+        this.canvas.node.on(Input.EventType.TOUCH_END, this.tryStartMusic, this)
+    }
+
+    private tryStartMusic() {
+        if (this.bundle) {
+            this.playMusic()
+
+            input.off(Input.EventType.TOUCH_END, this.tryStartMusic, this)
+            this.canvas.node.off(Input.EventType.TOUCH_END, this.tryStartMusic, this)
+        }
     }
 
     public static playSound(clip: AudioClip, soundScale: number = 1) {
@@ -49,12 +67,13 @@ export class Audio extends PipelineComponent {
             this.sound.playOneShot(clip, soundScale * PlayerStorage.sound.value)
         } else {
             this.music.clip = clip
-            this.music.volume = PlayerStorage.music.value
+            this.music.volume = this.paused ? 0 : PlayerStorage.music.value
             this.music.play()
         }
     }
 
-    private async playMusic(bundle: AssetManager.Bundle) {
+    private async playMusic() {
+        const bundle = this.bundle
         const paths = bundle.getDirWithPath("/", AudioClip, []).map(c => c.path)
 
         const rand = new Rand(Date.now())
@@ -66,7 +85,10 @@ export class Audio extends PipelineComponent {
             this.play(clip, 1, false)
             await waitSec(clip.getDuration())
 
+            this.music.stop() // possible bugfix with two clips at once
+            this.music.clip = undefined
             bundle.release(paths[i])
+
             await waitSec(1)
         }
     }

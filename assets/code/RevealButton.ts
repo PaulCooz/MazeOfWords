@@ -12,7 +12,7 @@ export abstract class RevealButton extends PipelineComponent {
 
     private anim: Tween
 
-    awake() {
+    load() {
         this.button.node.on(Button.EventType.CLICK, this.onClick, this)
         this.hide(false)
     }

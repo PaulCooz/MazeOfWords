@@ -23,7 +23,7 @@ export class Grid extends PipelineComponent {
 
     private level: Level
 
-    awake() {
+    load() {
         this.aspectRatio.node.on(NodeEventType.SIZE_CHANGED, this.resizeCells, this)
     }
 

@@ -41,8 +41,8 @@
   <script type="module">
     const yg = await YaGames.init()
     globalThis.YG_Player = await yg.getPlayer()
-    globalThis.YG = yg
     globalThis.YG_Lang = yg.environment.i18n.lang
+    globalThis.YG = yg
   </script>
 </head>
 

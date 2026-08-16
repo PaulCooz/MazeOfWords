@@ -45,6 +45,7 @@ export class Tutor extends PipelineComponent {
 
         this.hint.onNoCoins.append(this.onNoCoins, this)
         PlayerStorage.coins.onChange.append(this.onCoins, this)
+        this.rewardedAd.onShow.append(this.dismiss, this)
     }
 
     levelStart(level: Level) {

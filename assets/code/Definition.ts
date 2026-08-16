@@ -11,8 +11,8 @@ export class Definition extends RevealButton {
     private level: Level
     private wikiOk: { [key in Locale]?: boolean } = {}
 
-    awake() {
-        super.awake()
+    load() {
+        super.load()
 
         for (const locale of Locales) {
             fetch(`https://${locale}.wiktionary.org`, { method: 'HEAD' })
