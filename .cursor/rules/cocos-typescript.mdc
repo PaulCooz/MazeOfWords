@@ -10,7 +10,7 @@ alwaysApply: false
 
 - Use `@ccclass('ExactName')` matching the class; never rename casually — scenes store compressed UUID from `.meta`.
 - Wire scene references with `@property`; do not `find` by string at runtime unless unavoidable.
-- Put reusable, game-agnostic code under `self contained/` (must not import game scripts).
+- Put reusable, game-agnostic code under `self-contained/` (must not import game scripts).
 
 ## Module-load safety
 

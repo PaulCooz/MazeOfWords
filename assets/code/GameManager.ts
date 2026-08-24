@@ -6,9 +6,9 @@ import { LevelChangeEvent, LevelCompleteEvent, Locale, OpenedLetterEvent } from 
 import { Level } from './level/Level'
 import { Config } from './Config'
 import { CloudSave } from './CloudSave'
-import { initYandex, loadingReady, setGamePaused, setLeaderboardScore, yandexLang } from './self contained/Yandex'
-import { PopupManager } from './self contained/PopupManager'
-import { Toast } from './self contained/Toast'
+import { initYandex, loadingReady, setGamePaused, setLeaderboardScore, yandexLang } from './self-contained/Yandex'
+import { PopupManager } from './self-contained/PopupManager'
+import { Toast } from './self-contained/Toast'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')

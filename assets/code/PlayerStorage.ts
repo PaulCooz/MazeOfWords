@@ -1,7 +1,7 @@
 import { Locale } from "./Common"
 import { Config } from "./Config"
 import { LevelData } from "./level/Level"
-import { clearAllStorage, StorageValue } from "./self contained/Storage"
+import { clearAllStorage, StorageValue } from "./self-contained/Storage"
 
 type LevelType = { [locale in Locale]?: LevelData }
 type Len2WordIndexType = { [locale in Locale]?: { [wordLen: number]: number } }

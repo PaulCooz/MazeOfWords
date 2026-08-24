@@ -1,5 +1,5 @@
 import { Config } from "./Config"
-import { showFullscreenAdv } from "./self contained/Yandex"
+import { showFullscreenAdv } from "./self-contained/Yandex"
 
 export class Adv {
     private static lastFullscreen = Date.now()

@@ -1,7 +1,7 @@
 import { _decorator, AudioClip, Component } from 'cc'
 import { Audio } from './Audio'
 import { PipelineComponent } from './PipelineComponent'
-import { PopupManager } from './self contained/PopupManager'
+import { PopupManager } from './self-contained/PopupManager'
 const { ccclass, property } = _decorator
 
 @ccclass('AudioHelper')

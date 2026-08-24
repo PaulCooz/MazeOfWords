@@ -1,4 +1,4 @@
-import { getFlags } from "./self contained/Yandex"
+import { getFlags } from "./self-contained/Yandex"
 
 export class Config {
     static hintCost = 10

@@ -1666,7 +1666,7 @@
     "_alignFlags": 18,
     "_target": null,
     "_left": 10,
-    "_right": 310,
+    "_right": 10,
     "_top": 590,
     "_bottom": 590,
     "_horizontalCenter": 0,
@@ -1677,7 +1677,7 @@
     "_isAbsBottom": true,
     "_isAbsHorizontalCenter": true,
     "_isAbsVerticalCenter": true,
-    "_originalWidth": 100,
+    "_originalWidth": 700,
     "_originalHeight": 100,
     "_alignMode": 2,
     "_lockFlags": 0,
@@ -1696,7 +1696,8 @@
     "UITransform": {
       "__id__": 42
     },
-    "_id": "ffSCBa7bNP/ZXxoKDKA30Q"
+    "horizontalPaddings": 20,
+    "_id": "b7S491PDlB9rSf4liWeqe7"
   },
   {
     "__type__": "e16b4OJzOdEJbCgMsbHUev3",

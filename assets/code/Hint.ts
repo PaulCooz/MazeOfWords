@@ -5,8 +5,8 @@ import { Level } from './level/Level'
 import { PlayerStorage } from './PlayerStorage'
 import { OpenedLetterEvent } from './Common'
 import { Config } from './Config'
-import { toPromise } from './self contained/Utils'
-import { Delegate } from './self contained/Delegate'
+import { toPromise } from './self-contained/Utils'
+import { Delegate } from './self-contained/Delegate'
 import { Coins } from './Coins'
 const { ccclass, property } = _decorator
 

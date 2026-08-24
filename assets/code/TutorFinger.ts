@@ -1,5 +1,5 @@
 import { _decorator, Component, Node, Tween, tween, Vec3 } from 'cc'
-import { tracePathTween } from './self contained/Utils'
+import { tracePathTween } from './self-contained/Utils'
 const { ccclass } = _decorator
 
 const PressScale = new Vec3(0.85, 0.85, 1)

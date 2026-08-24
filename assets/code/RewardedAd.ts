@@ -1,9 +1,9 @@
 import { _decorator, Label, math } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { Coins } from './Coins'
-import { showRewardedVideo } from './self contained/Yandex'
+import { showRewardedVideo } from './self-contained/Yandex'
 import { Config } from './Config'
-import { Delegate } from './self contained/Delegate'
+import { Delegate } from './self-contained/Delegate'
 const { ccclass, property } = _decorator
 
 @ccclass('RewardedAd')

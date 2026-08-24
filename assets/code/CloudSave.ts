@@ -1,5 +1,5 @@
-import { exportAllStorage, importAllStorage } from "./self contained/Storage"
-import { getPlayerData, setPlayerData } from "./self contained/Yandex"
+import { exportAllStorage, importAllStorage } from "./self-contained/Storage"
+import { getPlayerData, setPlayerData } from "./self-contained/Yandex"
 import { PlayerStorage } from "./PlayerStorage"
 
 const PushIntervalSec = 4

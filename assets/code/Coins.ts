@@ -6,8 +6,8 @@ import { WordResult } from './Common'
 import { GridCell } from './level/GridCell'
 import { Config } from './Config'
 import { Level } from './level/Level'
-import { labelCounterTween } from './self contained/Utils'
-import { Rand } from './self contained/Rand'
+import { labelCounterTween } from './self-contained/Utils'
+import { Rand } from './self-contained/Rand'
 import { Audio } from './Audio'
 const { ccclass, property } = _decorator
 

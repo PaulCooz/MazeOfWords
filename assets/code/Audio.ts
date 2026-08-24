@@ -1,11 +1,11 @@
 import { _decorator, AssetManager, AudioClip, AudioSource, Input } from 'cc'
-import { globalInput } from './self contained/GlobalInput'
+import { globalInput } from './self-contained/GlobalInput'
 import { PipelineComponent } from './PipelineComponent'
-import { waitSec } from './self contained/Utils'
+import { waitSec } from './self-contained/Utils'
 import { PlayerStorage } from './PlayerStorage'
-import { loadBundle, loadFile } from './self contained/Engine'
-import { Rand } from './self contained/Rand'
-import { onYaPause } from './self contained/Yandex'
+import { loadBundle, loadFile } from './self-contained/Engine'
+import { Rand } from './self-contained/Rand'
+import { onYaPause } from './self-contained/Yandex'
 const { ccclass, property } = _decorator
 
 @ccclass('Audio')

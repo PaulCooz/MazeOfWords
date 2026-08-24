@@ -1,5 +1,5 @@
 import { _decorator, WebView } from 'cc'
-import { Popup } from './self contained/Popup'
+import { Popup } from './self-contained/Popup'
 const { ccclass, property } = _decorator
 
 @ccclass('DefinitionPopup')

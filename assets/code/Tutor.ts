@@ -1,5 +1,5 @@
 import { _decorator, Input, instantiate, Prefab, UITransform } from 'cc'
-import { globalInput } from './self contained/GlobalInput'
+import { globalInput } from './self-contained/GlobalInput'
 import { PipelineComponent } from './PipelineComponent'
 import { Grid } from './level/Grid'
 import { GridInput } from './level/GridInput'
@@ -9,11 +9,11 @@ import { TutorFinger } from './TutorFinger'
 import { Level } from './level/Level'
 import { WordResult } from './Common'
 import { GridCell } from './level/GridCell'
-import { Toast } from './self contained/Toast'
+import { Toast } from './self-contained/Toast'
 import { localize } from './Lang'
-import { waitSec } from './self contained/Utils'
+import { waitSec } from './self-contained/Utils'
 import { PlayerStorage } from './PlayerStorage'
-import { PopupManager } from './self contained/PopupManager'
+import { PopupManager } from './self-contained/PopupManager'
 const { ccclass, property } = _decorator
 
 @ccclass('Tutor')

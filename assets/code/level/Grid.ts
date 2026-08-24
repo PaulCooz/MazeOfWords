@@ -1,6 +1,6 @@
 import { _decorator, instantiate, Layout, NodeEventType, Prefab, Size, Widget } from 'cc'
 import { PipelineComponent } from '../PipelineComponent'
-import { AspectRatio } from '../self contained/AspectRatio'
+import { SquareByHeight } from '../self-contained/SquareByHeight'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
 const { ccclass, property } = _decorator
@@ -13,8 +13,8 @@ export class Grid extends PipelineComponent {
     layout: Layout
     @property(Widget)
     widget: Widget
-    @property(AspectRatio)
-    aspectRatio: AspectRatio
+    @property(SquareByHeight)
+    aspectRatio: SquareByHeight
 
     @property(Prefab)
     cellPrefab: Prefab

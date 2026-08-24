@@ -1,14 +1,14 @@
 import { _decorator, AudioClip, Color, EventTouch, Input, Label, NodeEventType, tween, Tween, Vec3 } from 'cc'
-import { globalInput } from '../self contained/GlobalInput'
+import { globalInput } from '../self-contained/GlobalInput'
 import { Grid } from './Grid'
 import { Level } from './Level'
 import { GridCell } from './GridCell'
 import { PipelineComponent } from '../PipelineComponent'
 import { Direction, LevelCompleteEvent, WordResult } from '../Common'
-import { Delegate } from '../self contained/Delegate'
+import { Delegate } from '../self-contained/Delegate'
 import { Audio } from '../Audio'
 import { isWordExist } from './LevelGenerator'
-import { toPromise } from '../self contained/Utils'
+import { toPromise } from '../self-contained/Utils'
 const { ccclass, property } = _decorator
 
 const SelectScale = 0.95

@@ -62,7 +62,7 @@ flowchart LR
 - **Platform (Yandex Games)** — `index.ejs` loads the SDK; `Yandex.ts` waits for globals or installs an editor mock, reports game ready, and tracks gameplay pause/resume. `Config` holds Remote Config–overridable constants. `Adv` shows fullscreen interstitials with `Config.interCooldown`. The footer button shows a rewarded video and grants `Config.rewardedCoins`. Authorized players submit `leaderboards.setScore("level", displayedLevel)`
 - **Popups / end buttons** — `PopupManager` + `Popup` subclasses; `RevealButton` base for Next / Definition show-hide
 - **Audio** — pipeline `Audio` plays SFX and shuffles the `music` bundle; volumes live in storage; Yandex `game_api_pause` mutes
-- _**self contained**_ — helpers that **must not depend on game-specific files**
+- _**self-contained**_ — helpers that **must not depend on game-specific files**
 
 ### Runtime loop
 
@@ -80,7 +80,7 @@ flowchart LR
 | --- | --- |
 | `assets/code/` | Game scripts and pipeline |
 | `assets/code/level/` | Grid, input, generator, next-level button |
-| `assets/code/self contained/` | Reusable engine / SDK wrappers |
+| `assets/code/self-contained/` | Reusable engine / SDK wrappers |
 | `assets/node/` | Scene and prefabs (editor-owned wiring) |
 | `assets/level/words/` | Dictionaries (`words` bundle): `words_all_{locale}.txt` |
 | `assets/level/converter.py` | Offline rebuild of those lists (Wiktionary dumps + wordfreq) |
