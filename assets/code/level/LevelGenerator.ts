@@ -1,6 +1,6 @@
 import { TextAsset } from "cc"
 import { loadBundle, loadFile } from "../self-contained/Engine"
-import { Locale } from "../Common"
+import { Locale } from "../self-contained/Locale"
 import { Config } from "../Config"
 import { PlayerStorage } from "../PlayerStorage"
 import { Rand } from "../self-contained/Rand"

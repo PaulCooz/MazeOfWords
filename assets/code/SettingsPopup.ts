@@ -2,7 +2,7 @@ import { _decorator, Label, Slider, Sprite, SpriteFrame } from 'cc'
 import { Popup } from './self-contained/Popup'
 import { PlayerStorage } from './PlayerStorage'
 import { localize } from './Lang'
-import { Locale } from './Common'
+import { Locale } from './self-contained/Locale'
 const { ccclass, property } = _decorator
 
 @ccclass('SettingsPopup')

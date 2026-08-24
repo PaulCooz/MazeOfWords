@@ -1,4 +1,5 @@
-import { Direction, Locale } from "../Common"
+import { Direction } from "../Common"
+import { Locale } from "../self-contained/Locale"
 import { PlayerStorage } from "../PlayerStorage"
 
 export interface LevelData {

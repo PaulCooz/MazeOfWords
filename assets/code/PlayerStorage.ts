@@ -1,4 +1,4 @@
-import { Locale } from "./Common"
+import { Locale } from "./self-contained/Locale"
 import { Config } from "./Config"
 import { LevelData } from "./level/Level"
 import { clearAllStorage, StorageValue } from "./self-contained/Storage"

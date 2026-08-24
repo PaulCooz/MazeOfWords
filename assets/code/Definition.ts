@@ -1,7 +1,7 @@
 import { _decorator } from 'cc'
 import { RevealButton } from './RevealButton'
 import { Level } from './level/Level'
-import { Locale, Locales } from './Common'
+import { Locale, Locales } from './self-contained/Locale'
 import { PopupManager } from './self-contained/PopupManager'
 import { DefinitionPopup } from './DefinitionPopup'
 const { ccclass } = _decorator

@@ -1,4 +1,4 @@
-import { Locale } from "./Common"
+import { Locale } from "./self-contained/Locale"
 import { PlayerStorage } from "./PlayerStorage"
 
 export function localize(key: string) {

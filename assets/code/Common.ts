@@ -17,9 +17,6 @@ export class OpenedLetterEvent extends Event {
 
 export type WordResult = 'correct' | 'bonus' | 'wrong'
 
-export type Locale = "en" | "ru"
-export const Locales = ["en", "ru"]
-
 export enum Direction {
     Right = 0,
     Down = 1,
