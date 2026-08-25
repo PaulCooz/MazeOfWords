@@ -36,13 +36,14 @@
 
   <link rel="stylesheet" type="text/css" href="<%= cssUrl %>" />
 
-  <!-- Yandex Games SDK -->
-  <script src="/sdk.js"></script>
+  <!-- CrazyGames SDK -->
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
   <script type="module">
-    const yg = await YaGames.init()
-    globalThis.YG_Player = await yg.getPlayer()
-    globalThis.YG_Lang = yg.environment.i18n.lang
-    globalThis.YG = yg
+    const SDK = globalThis.CrazyGames.SDK 
+    await SDK.init()
+    globalThis.Platform = "CG"
+    globalThis.CG_isReady = true
+    SDK.game.loadingStart()
   </script>
 </head>
 

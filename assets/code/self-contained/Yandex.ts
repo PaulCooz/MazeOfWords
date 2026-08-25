@@ -1,4 +1,5 @@
 import { Delegate } from "./Delegate"
+import { waitSec } from "./Utils"
 
 const SdkWaitSec = 2
 const mockLog = (..._: any[]) => { } // swap to console.log when debugging SDK mock
@@ -12,7 +13,7 @@ export async function initYandex() {
     if (globalThis.YaGames != undefined) { // sdk.js is connected
         const deadline = Date.now() + SdkWaitSec * 1000
         while (globalThis.YG == undefined && Date.now() < deadline) // index.ejs is initializing
-            await new Promise(resolve => setTimeout(resolve, 100))
+            await waitSec(0.1)
     }
 
     if (globalThis.YG == undefined)
