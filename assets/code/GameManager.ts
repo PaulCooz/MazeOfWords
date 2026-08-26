@@ -3,13 +3,13 @@ import { PipelineComponent } from './PipelineComponent'
 import { createLevel } from './level/LevelGenerator'
 import { PlayerStorage } from './PlayerStorage'
 import { LevelChangeEvent, LevelCompleteEvent, OpenedLetterEvent } from './Common'
-import { Locale } from './self-contained/Locale'
 import { Level } from './level/Level'
 import { Config } from './Config'
-import { CloudSave } from './CloudSave'
-import { initYandex, loadingReady, setGamePaused, setLeaderboardScore, yandexLang } from './self-contained/Yandex'
 import { PopupManager } from './self-contained/PopupManager'
 import { Toast } from './self-contained/Toast'
+import { ControlFlags, Platform } from './self-contained/platform/Platform'
+import { globalInput } from './self-contained/GlobalInput'
+import { hasFlag } from './self-contained/Utils'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')
@@ -37,13 +37,14 @@ export class GameManager extends Component {
         PopupManager.onPushPopup.append(this.checkPause, this)
         PopupManager.onPopPopup.append(this.checkPause, this)
 
-        await initYandex()
-        await Promise.all([Config.load(), CloudSave.pull()])
+        await Platform.init()
+        await Platform.pullPlayerData(Config, () => PlayerStorage.resetAll())
+
+        Platform.onControlChange.append(this.checkInput, this)
+        this.checkInput(Platform.control)
 
         if (!PlayerStorage.langChosen.value)
-            PlayerStorage.lang.value = yandexLang() as Locale
-
-        CloudSave.startPushLoop()
+            PlayerStorage.lang.value = Platform.lang
 
         PlayerStorage.lang.onChange.append(this.startLevel, this)
 
@@ -52,7 +53,10 @@ export class GameManager extends Component {
 
         submitLevelScore()
         await this.startLevel()
-        loadingReady()
+    }
+
+    private checkInput(control: ControlFlags) {
+        globalInput.enabled = !hasFlag(control, ControlFlags.BlockInput)
     }
 
     private async startLevel() {
@@ -101,10 +105,10 @@ export class GameManager extends Component {
     }
 
     private checkPause() {
-        setGamePaused(!this.playing || !PopupManager.empty())
+        Platform.gamePaused = !this.playing || !PopupManager.empty()
     }
 }
 
 function submitLevelScore() {
-    setLeaderboardScore("level", PlayerStorage.levelIndex.value + 1)
+    Platform.submitScore(PlayerStorage.levelIndex.value + 1)
 }

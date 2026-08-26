@@ -1,9 +1,10 @@
 import { _decorator, Label, math } from 'cc'
 import { PipelineComponent } from './PipelineComponent'
 import { Coins } from './Coins'
-import { showRewardedVideo } from './self-contained/Yandex'
 import { Config } from './Config'
-import { Delegate } from './self-contained/Delegate'
+import { Platform } from './self-contained/platform/Platform'
+import { Toast } from './self-contained/Toast'
+import { localize } from './Lang'
 const { ccclass, property } = _decorator
 
 @ccclass('RewardedAd')
@@ -24,7 +25,7 @@ export class RewardedAd extends PipelineComponent {
             return
         this.busy = true
 
-        if (await showRewardedVideo()) {
+        if (await Platform.showRewarded()) {
             const amount = Config.rewardedCoins
             const flyCount = Math.round(math.clamp(amount / 2, 1, 10))
             let added = 0
@@ -33,6 +34,8 @@ export class RewardedAd extends PipelineComponent {
                 this.coins.addCoin(this.node.worldPosition, 0.5 + i * 0.05, add)
                 added += add
             }
+        } else {
+            Toast.push(localize("AdvError"))
         }
 
         this.busy = false

@@ -90,7 +90,7 @@ flowchart LR
 
 ## TODO
 
-- analytics
+- safe area
 - leaderboard view (score is already submitted)
 
 ## Agent notes

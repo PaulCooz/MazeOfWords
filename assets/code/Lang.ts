@@ -6,6 +6,8 @@ export function localize(key: string) {
 }
 
 const Translations: { [key in string]: { [key in Locale]: string } } = {
+    ["ru"]: { ["ru"]: "Русский", ["en"]: "Русский" },
+    ["en"]: { ["ru"]: "English", ["en"]: "English" },
     ["Settings"]: {
         ["ru"]: "Настройки",
         ["en"]: "Settings",
@@ -58,6 +60,8 @@ const Translations: { [key in string]: { [key in Locale]: string } } = {
         ["ru"]: "+буква",
         ["en"]: "+letter",
     },
-    ["ru"]: { ["ru"]: "Русский", ["en"]: "Русский" },
-    ["en"]: { ["ru"]: "English", ["en"]: "English" },
+    ["AdvError"]: {
+        ["ru"]: "Что-то пошло не так, попробуйте позже",
+        ["en"]: "Something went wrong, try again later",
+    },
 }

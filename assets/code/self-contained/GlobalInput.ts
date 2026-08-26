@@ -15,6 +15,8 @@ type EngineInput = typeof input & {
 class GlobalInput {
     private readonly events = new EventTarget()
 
+    public enabled = true
+
     constructor() {
         const register = (input as EngineInput)._registerEventDispatcher
         if (typeof register != 'function')
@@ -28,7 +30,7 @@ class GlobalInput {
                 this.events.emit(event.type, event)
                 event.propagationStopped = stopped
                 event.propagationImmediateStopped = immediate
-                return true
+                return this.enabled
             },
             onThrowException() { },
         })

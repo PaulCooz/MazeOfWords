@@ -1,11 +1,11 @@
 import { _decorator, AssetManager, AudioClip, AudioSource, Input } from 'cc'
 import { globalInput } from './self-contained/GlobalInput'
 import { PipelineComponent } from './PipelineComponent'
-import { waitSec } from './self-contained/Utils'
+import { hasFlag, waitSec } from './self-contained/Utils'
 import { PlayerStorage } from './PlayerStorage'
 import { loadBundle, loadFile } from './self-contained/Engine'
 import { Rand } from './self-contained/Rand'
-import { onYaPause } from './self-contained/Yandex'
+import { ControlFlags, Platform } from './self-contained/platform/Platform'
 const { ccclass, property } = _decorator
 
 @ccclass('Audio')
@@ -18,7 +18,7 @@ export class Audio extends PipelineComponent {
     private bundle: AssetManager.Bundle
 
     private rand: Rand
-    private paused: boolean
+    private muted: boolean
 
     private static _instance: Audio
 
@@ -27,10 +27,10 @@ export class Audio extends PipelineComponent {
 
         PlayerStorage.sound.onChange.append(v => this.sound.volume = v)
         PlayerStorage.music.onChange.append(v => this.music.volume = v)
-        onYaPause.append(paused => {
-            this.paused = paused
-            this.sound.volume = paused ? 0 : 1
-            this.music.volume = paused ? 0 : PlayerStorage.music.value
+        Platform.onControlChange.append(control => {
+            this.muted = hasFlag(control, ControlFlags.MuteAudio)
+            this.sound.volume = this.muted ? 0 : 1
+            this.music.volume = this.muted ? 0 : PlayerStorage.music.value
         })
 
         this.rand = new Rand(Date.now())
@@ -64,7 +64,7 @@ export class Audio extends PipelineComponent {
             this.sound.playOneShot(clip, soundScale * PlayerStorage.sound.value)
         } else {
             this.music.clip = clip
-            this.music.volume = this.paused ? 0 : PlayerStorage.music.value
+            this.music.volume = this.muted ? 0 : PlayerStorage.music.value
             this.music.play()
         }
     }

@@ -17,6 +17,10 @@ export function withY<T extends { clone: () => T, y: number }>(y: number, v: T):
     return n
 }
 
+export const addFlag = (value: number, flag: number) => value | flag
+export const subFlag = (value: number, flag: number) => value & ~flag
+export const hasFlag = (value: number, flag: number) => (value & flag) != 0
+
 export function rangeInt(from: number, to: number) {
     return Array.from({ length: to - from }, (_, i) => i + from)
 }

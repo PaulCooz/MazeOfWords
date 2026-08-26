@@ -1,7 +1,8 @@
 import { Locale } from "./self-contained/Locale"
 import { Config } from "./Config"
 import { LevelData } from "./level/Level"
-import { clearAllStorage, StorageValue } from "./self-contained/Storage"
+import { StorageValue } from "./self-contained/StorageValue"
+import { Platform } from "./self-contained/platform/Platform"
 
 type LevelType = { [locale in Locale]?: LevelData }
 type Len2WordIndexType = { [locale in Locale]?: { [wordLen: number]: number } }
@@ -60,7 +61,7 @@ export class PlayerStorage {
     }
 
     static clearAll() {
-        clearAllStorage()
+        Platform.storage.clear()
         this.resetAll()
     }
 }

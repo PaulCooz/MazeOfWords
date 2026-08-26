@@ -1,5 +1,6 @@
 import { _decorator, Color, Component, Label, Sprite, Tween, tween, UITransform, Vec3 } from 'cc'
 import { Direction } from '../Common'
+import { addFlag, hasFlag, subFlag } from '../self-contained/Utils'
 const { ccclass, property } = _decorator
 
 enum State {
@@ -37,18 +38,14 @@ export class GridCell extends Component {
 
     empty: boolean
 
-    get hinted() {
-        return (this.state & State.Hinted) != 0
-    }
+    get hinted() { return hasFlag(this.state, State.Hinted) }
     private set hinted(v: boolean) {
-        this.state = v ? this.state | State.Hinted : this.state & ~State.Hinted
+        this.state = (v ? addFlag : subFlag)(this.state, State.Hinted)
     }
 
-    get pressed() {
-        return (this.state & State.Pressed) != 0
-    }
+    get pressed() { return hasFlag(this.state, State.Pressed) }
     set pressed(v: boolean) {
-        this.state = v ? this.state | State.Pressed : this.state & ~State.Pressed
+        this.state = (v ? addFlag : subFlag)(this.state, State.Pressed)
     }
 
     get idleColor() { return this.hinted ? ColorHinted : this.defaultColor }
