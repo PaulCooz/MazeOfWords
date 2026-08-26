@@ -4,8 +4,6 @@ import { addFlag, hasFlag, subFlag, waitSec } from "../Utils"
 import { Locale } from "../Locale"
 import { sys } from "cc"
 
-// 32-byte base64 Encryption Key from CrazyGames Developer Portal → Leaderboards (generate there; must match portal)
-const ScoreEncryptionKey = ""
 
 export class CrazyGames implements IPlatform {
     SDK: any
@@ -118,18 +116,21 @@ export class CrazyGames implements IPlatform {
         this.control = this.SDK.game.settings.muteAudio ? ControlFlags.MuteAudio : ControlFlags.Empty
     }
 
-    submitScore(value: number): Promise<void> {
-        return this.user
-            ? encryptScore(value)
-                .then(encrypted => this.user.submitScore({
-                    encryptedScore: encrypted,
-                    score: value,
-                }))
-            : Promise.resolve()
+    submitScore(_: number): Promise<void> {
+        return Promise.resolve() // ignore till invite
 
+        // return this.user
+        //     ? encryptScore(value)
+        //         .then(encrypted => this.user.submitScore({
+        //             encryptedScore: encrypted,
+        //             score: value,
+        //         }))
+        //     : Promise.resolve()
     }
 }
 
+// 32-byte base64 Encryption Key from CrazyGames Developer Portal → Leaderboards (generate there; must match portal)
+const ScoreEncryptionKey = "while i don't have the key, i'll ignore this shit"
 async function encryptScore(score: number) {
     const iv = window.crypto.getRandomValues(new Uint8Array(12))
     const algorithm = { name: 'AES-GCM', iv }
