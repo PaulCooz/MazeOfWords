@@ -1,10 +1,9 @@
-import { _decorator, Sprite, Tween, tween } from 'cc'
+import { _decorator, Component, Sprite, Tween, tween } from 'cc'
 import { withA } from './self-contained/Utils'
-import { PipelineComponent } from './PipelineComponent'
 const { ccclass, property } = _decorator
 
 @ccclass('LoadingView')
-export class LoadingView extends PipelineComponent {
+export class LoadingView extends Component {
     @property(Sprite)
     back: Sprite
     @property(Sprite)
@@ -20,7 +19,7 @@ export class LoadingView extends PipelineComponent {
         ).repeatForever().start()
     }
 
-    public awake(): void {
+    public hide() {
         this.anim.stop()
         tween(this.back)
             .to(0.1, { color: withA(0, this.back.color) })
@@ -28,5 +27,3 @@ export class LoadingView extends PipelineComponent {
             .start()
     }
 }
-
-

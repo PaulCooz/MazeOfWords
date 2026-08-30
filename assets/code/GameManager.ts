@@ -11,6 +11,7 @@ import { ControlFlags, Platform } from './self-contained/platform/Platform'
 import { globalInput } from './self-contained/GlobalInput'
 import { hasFlag } from './self-contained/Utils'
 import { installWebViewportFix } from './self-contained/WebViewport'
+import { LoadingView } from './LoadingView'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')
@@ -21,6 +22,8 @@ export class GameManager extends Component {
     popupManager: PopupManager
     @property(Toast)
     toast: Toast
+    @property(LoadingView)
+    loading: LoadingView
 
     private level: Level
     private playing = false
@@ -29,6 +32,7 @@ export class GameManager extends Component {
         this.popupManager.setup()
         this.toast.setup()
 
+        this.loading.load()
         for (const p of this.pipeline)
             p.load?.()
 
@@ -55,6 +59,8 @@ export class GameManager extends Component {
 
         submitLevelScore()
         await this.startLevel()
+
+        this.loading.hide()
     }
 
     private checkInput(control: ControlFlags) {

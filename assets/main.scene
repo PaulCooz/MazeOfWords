@@ -5657,9 +5657,6 @@
     "__prefab": null,
     "pipeline": [
       {
-        "__id__": 152
-      },
-      {
         "__id__": 22
       },
       {
@@ -5701,6 +5698,9 @@
     },
     "toast": {
       "__id__": 139
+    },
+    "loading": {
+      "__id__": 152
     },
     "_id": "a3yGoa3EZMU4cT6hljSaxq"
   },
