@@ -85,7 +85,7 @@ flowchart LR
 | `assets/level/words/` | Dictionaries (`words` bundle): `words_all_{locale}.txt` |
 | `assets/level/converter.py` | Offline rebuild of those lists (Wiktionary dumps + wordfreq) |
 | `assets/media/music/` | Background tracks (`music` bundle) |
-| `build-templates/web-mobile/` | Web shell + Yandex SDK bootstrap |
+| `extensions/platform-builder/` | Editor commands: Build for YG (`build/yandex/`) and Build for CG (`build/crazygames/`) |
 | `.cursor/rules/` | Guidance for Cursor agents |
 
 ## TODO

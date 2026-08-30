@@ -1,0 +1,15 @@
+{
+    "menu": "Build",
+    "platforms": [
+        {
+            "id": "YG",
+            "label": "Yandex Games",
+            "output": "yandex"
+        },
+        {
+            "id": "CG",
+            "label": "Crazy Games",
+            "output": "crazygames"
+        }
+    ]
+}

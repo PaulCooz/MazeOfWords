@@ -1,0 +1,51 @@
+{
+    "$schema": "./@types/schema/package/index.json",
+    "package_version": 2,
+    "name": "platform-builder",
+    "version": "1.0.0",
+    "author": "Me",
+    "editor": ">=3.8.8",
+    "scripts": {
+        "preinstall": "node ./scripts/preinstall.js",
+        "build": "node ./scripts/sync-package.js && tsc"
+    },
+    "main": "./dist/main.js",
+    "title": "i18n:platform-builder.title",
+    "description": "i18n:platform-builder.description",
+    "contributions": {
+        "builder": "./dist/builder.js",
+        "menu": [
+            {
+                "path": "Build",
+                "label": "Yandex Games",
+                "message": "build-YG"
+            },
+            {
+                "path": "Build",
+                "label": "Crazy Games",
+                "message": "build-CG"
+            }
+        ],
+        "messages": {
+            "build-YG": {
+                "methods": [
+                    "build-YG"
+                ]
+            },
+            "build-CG": {
+                "methods": [
+                    "build-CG"
+                ]
+            }
+        }
+    },
+    "dependencies": {
+        "fs-extra": "^10.0.0"
+    },
+    "devDependencies": {
+        "@cocos/creator-types": "^3.8.8",
+        "@types/fs-extra": "^5.0.4",
+        "@types/node": "^18.17.1",
+        "typescript": "^5.8.2"
+    }
+}

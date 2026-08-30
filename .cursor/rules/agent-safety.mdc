@@ -10,7 +10,8 @@ alwaysApply: true
 - `assets/code/**/*.ts` — gameplay and helpers
 - `README.md`, `.cursor/rules/**` — intent and agent guidance
 - Word lists under `assets/level/words/` when changing dictionary content
-- `build-templates/**` — only when changing web shell / SDK bootstrap
+- `build-templates/**` — only when changing the default web-mobile shell
+- `extensions/platform-builder/` — Yandex / CrazyGames editor build commands and templates
 
 ## Edit with care
 
