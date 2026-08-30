@@ -83,7 +83,7 @@ flowchart LR
 | `assets/code/self-contained/` | Reusable engine / SDK wrappers |
 | `assets/node/` | Scene and prefabs (editor-owned wiring) |
 | `assets/level/words/` | Dictionaries (`words` bundle): `words_all_{locale}.txt` |
-| `assets/level/converter.py` | Offline rebuild of those lists (Wiktionary dumps + wordfreq) |
+| `assets/level/words_loader.py` | Rebuild `words_all_{locale}.txt` from kaikki.org noun/name dumps + wordfreq. Add/remove a locale by editing `LANGUAGES` |
 | `assets/media/music/` | Background tracks (`music` bundle) |
 | `extensions/platform-builder/` | Editor commands: Build for YG (`build/yandex/`) and Build for CG (`build/crazygames/`) |
 | `.cursor/rules/` | Guidance for Cursor agents |

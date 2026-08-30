@@ -17,7 +17,7 @@ alwaysApply: true
 
 - `*.scene` / `*.prefab` — only when wiring components or layout; keep diffs minimal
 - `*.meta` — do **not** create or edit; Creator generates these on import
-- `assets/level/converter.py` — dictionary rebuild tool, not runtime
+- `assets/level/words_loader.py` — dictionary rebuild tool, not runtime
 
 ## Do not edit / do not commit
 

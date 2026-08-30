@@ -31,4 +31,4 @@ Ignore / never commit: `library/`, `temp/`, `local/`, `build/`, `profiles/` (reg
 - Match existing style: optional chaining for pipeline hooks, `==` for nullish checks, minimal comments.
 - Tunable constants live in `Config` (Remote Config can override); do not hardcode hint cost / cooldowns / level bands elsewhere.
 - RNG: use `self-contained/Rand` (mulberry32). Do **not** call Cocos `math.pseudoRandom*` with `seed++` — consecutive seeds correlate badly.
-- Do not run `assets/level/converter.py` unless asked (needs local Wiktionary dumps).
+- Do not run `assets/level/words_loader.py` unless asked (downloads Wiktionary snapshots).
