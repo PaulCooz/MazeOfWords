@@ -15,10 +15,29 @@ export class Definition extends RevealButton {
         super.load()
 
         for (const locale of Locales) {
-            fetch(`https://${locale}.wiktionary.org`, { method: 'HEAD' })
-                .then((r) => this.wikiOk[locale] = r.ok)
+            this.isAvailable(`https://${locale}.wiktionary.org/favicon.ico`)
+                .then((loaded) => this.wikiOk[locale] = loaded)
                 .catch(() => this.wikiOk[locale] = false)
         }
+    }
+
+    isAvailable(url: string) {
+        return new Promise<boolean>((resolve) => {
+            const img = new Image()
+            const timer = setTimeout(() => {
+                img.src = ""
+                resolve(false)
+            }, 2000)
+            img.onload = () => {
+                clearTimeout(timer)
+                resolve(true)
+            }
+            img.onerror = () => {
+                clearTimeout(timer)
+                resolve(false)
+            }
+            img.src = url
+        })
     }
 
     levelStart(level: Level) {
