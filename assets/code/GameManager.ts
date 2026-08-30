@@ -10,6 +10,7 @@ import { Toast } from './self-contained/Toast'
 import { ControlFlags, Platform } from './self-contained/platform/Platform'
 import { globalInput } from './self-contained/GlobalInput'
 import { hasFlag } from './self-contained/Utils'
+import { installWebViewportFix } from './self-contained/WebViewport'
 const { ccclass, property } = _decorator
 
 @ccclass('GameManager')
@@ -38,6 +39,7 @@ export class GameManager extends Component {
         PopupManager.onPopPopup.append(this.checkPause, this)
 
         await Promise.all([Platform.init(), loadWordConfigBundle()])
+        installWebViewportFix()
         await Platform.pullPlayerData(Config, () => PlayerStorage.resetAll())
 
         Platform.onControlChange.append(this.checkInput, this)

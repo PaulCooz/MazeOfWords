@@ -1,9 +1,9 @@
 export class Config {
-    static hintCost = 10
+    static hintCost = 20
     static startCoins = 20
     static correctCoins = 3
     static bonusCoins = 1
-    static rewardedCoins = 15
+    static rewardedCoins = 30
 
     static levelProgression = [
         { from: 0, to: 2, wordLength: [4] },

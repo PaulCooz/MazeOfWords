@@ -3,7 +3,6 @@ import { ControlFlags, IPlatform, IPlatformStorage } from "./Platform"
 import { addFlag, hasFlag, subFlag } from "../Utils"
 import { Locale } from "../Locale"
 import { sys } from "cc"
-import { installWebViewportFix } from "../WebViewport"
 
 
 export class CrazyGames implements IPlatform {
@@ -88,8 +87,6 @@ export class CrazyGames implements IPlatform {
 
         this.muteAudio = this.SDK.game.settings.muteAudio
         this.SDK.game.addSettingsChangeListener(({ muteAudio }) => this.muteAudio = muteAudio)
-
-        installWebViewportFix()
     }
     pullPlayerData(_: object, resetStorageValues: () => void) {
         resetStorageValues()
