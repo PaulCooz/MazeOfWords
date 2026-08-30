@@ -1,6 +1,32 @@
-import { copyFileSync, existsSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'fs-extra';
-import { join } from 'path';
+import { copyFileSync, emptyDirSync, existsSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'fs-extra';
+import { join, normalize } from 'path';
+import { IBuildTaskOption } from '../@types';
 import { PlatformTarget, PLATFORMS, warn } from './global';
+
+export function emptyPlatformOutput(options: IBuildTaskOption, target: PlatformTarget) {
+    const dest = resolveOutputDir(options, target);
+    const expected = (options.outputName || target.output).replace(/[/\\]+$/, '');
+    const tail = dest.split(/[/\\]/).filter(Boolean).pop();
+    if (tail !== expected) {
+        throw new Error(`Refusing to empty unexpected output dir: ${dest}`);
+    }
+    emptyDirSync(dest);
+    return dest;
+}
+
+export function resolveOutputDir(options: IBuildTaskOption, target: PlatformTarget) {
+    const outputName = options.outputName || target.output;
+    const buildPath = options.buildPath || 'project://build';
+    const root = resolveBuildRoot(buildPath);
+    return normalize(join(root, outputName));
+}
+
+function resolveBuildRoot(buildPath: string) {
+    if (buildPath.startsWith('project://')) {
+        return join(Editor.Project.path, buildPath.slice('project://'.length));
+    }
+    return buildPath;
+}
 
 export function applyPlatformTemplate(target: PlatformTarget, dest: string, projectName: string) {
     const templateRoot = join(__dirname, '..', 'templates', target.output);
@@ -14,9 +40,12 @@ export function applyPlatformTemplate(target: PlatformTarget, dest: string, proj
         throw new Error(`${target.label}: built index.html not found in ${dest}`);
     }
 
-    const bootstrap = extractCocosBootstrap(readFileSync(builtIndexPath, 'utf8'));
+    const builtHtml = readFileSync(builtIndexPath, 'utf8');
+    const bootstrap = extractCocosBootstrap(builtHtml);
+    const cssUrl = extractCssUrl(builtHtml);
     let html = readFileSync(ejsPath, 'utf8');
     html = html.replace(/<%= ?projectName ?%>/g, escapeHtml(projectName));
+    html = html.replace(/<%= ?cssUrl ?%>/g, escapeHtml(cssUrl));
     html = html.replace(/<%-\s*include\(\s*cocosTemplate\s*,\s*\{\s*\}\s*\)\s*%>/, bootstrap);
     writeFileSync(builtIndexPath, html, 'utf8');
 
@@ -62,6 +91,20 @@ function removeOtherPlatformExtras(current: PlatformTarget, dest: string) {
             }
         }
     }
+}
+
+export function extractCssUrl(html: string) {
+    const tags = html.match(/<link\b[^>]*>/gi) || [];
+    for (const tag of tags) {
+        if (!/\brel=["']stylesheet["']/i.test(tag)) {
+            continue;
+        }
+        const href = tag.match(/\bhref=["']([^"']+)["']/i)?.[1];
+        if (href) {
+            return href;
+        }
+    }
+    throw new Error('Built index.html is missing stylesheet href.');
 }
 
 export function extractCocosBootstrap(html: string) {

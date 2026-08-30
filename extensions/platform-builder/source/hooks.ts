@@ -1,6 +1,6 @@
 import { basename } from 'path';
 import { BuildHook } from '../@types';
-import { applyPlatformTemplate } from './apply-template';
+import { applyPlatformTemplate, emptyPlatformOutput } from './apply-template';
 import { error, log, resolveTarget } from './global';
 
 export const throwError: BuildHook.throwError = true;
@@ -16,6 +16,8 @@ export const onBeforeBuild: BuildHook.onBeforeBuild = async function (options) {
     if (!target) {
         return;
     }
+    const dest = emptyPlatformOutput(options, target);
+    log(`Cleared ${dest}`);
     log(`Building ${target.label} as web-mobile → build/${target.output}/`);
 };
 

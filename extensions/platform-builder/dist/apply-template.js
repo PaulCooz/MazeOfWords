@@ -1,10 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.emptyPlatformOutput = emptyPlatformOutput;
+exports.resolveOutputDir = resolveOutputDir;
 exports.applyPlatformTemplate = applyPlatformTemplate;
+exports.extractCssUrl = extractCssUrl;
 exports.extractCocosBootstrap = extractCocosBootstrap;
 const fs_extra_1 = require("fs-extra");
 const path_1 = require("path");
 const global_1 = require("./global");
+function emptyPlatformOutput(options, target) {
+    const dest = resolveOutputDir(options, target);
+    const expected = (options.outputName || target.output).replace(/[/\\]+$/, '');
+    const tail = dest.split(/[/\\]/).filter(Boolean).pop();
+    if (tail !== expected) {
+        throw new Error(`Refusing to empty unexpected output dir: ${dest}`);
+    }
+    (0, fs_extra_1.emptyDirSync)(dest);
+    return dest;
+}
+function resolveOutputDir(options, target) {
+    const outputName = options.outputName || target.output;
+    const buildPath = options.buildPath || 'project://build';
+    const root = resolveBuildRoot(buildPath);
+    return (0, path_1.normalize)((0, path_1.join)(root, outputName));
+}
+function resolveBuildRoot(buildPath) {
+    if (buildPath.startsWith('project://')) {
+        return (0, path_1.join)(Editor.Project.path, buildPath.slice('project://'.length));
+    }
+    return buildPath;
+}
 function applyPlatformTemplate(target, dest, projectName) {
     const templateRoot = (0, path_1.join)(__dirname, '..', 'templates', target.output);
     const ejsPath = (0, path_1.join)(templateRoot, 'index.ejs');
@@ -15,9 +40,12 @@ function applyPlatformTemplate(target, dest, projectName) {
     if (!(0, fs_extra_1.existsSync)(builtIndexPath)) {
         throw new Error(`${target.label}: built index.html not found in ${dest}`);
     }
-    const bootstrap = extractCocosBootstrap((0, fs_extra_1.readFileSync)(builtIndexPath, 'utf8'));
+    const builtHtml = (0, fs_extra_1.readFileSync)(builtIndexPath, 'utf8');
+    const bootstrap = extractCocosBootstrap(builtHtml);
+    const cssUrl = extractCssUrl(builtHtml);
     let html = (0, fs_extra_1.readFileSync)(ejsPath, 'utf8');
     html = html.replace(/<%= ?projectName ?%>/g, escapeHtml(projectName));
+    html = html.replace(/<%= ?cssUrl ?%>/g, escapeHtml(cssUrl));
     html = html.replace(/<%-\s*include\(\s*cocosTemplate\s*,\s*\{\s*\}\s*\)\s*%>/, bootstrap);
     (0, fs_extra_1.writeFileSync)(builtIndexPath, html, 'utf8');
     copyExtraTemplateFiles(templateRoot, dest);
@@ -58,6 +86,19 @@ function removeOtherPlatformExtras(current, dest) {
             }
         }
     }
+}
+function extractCssUrl(html) {
+    const tags = html.match(/<link\b[^>]*>/gi) || [];
+    for (const tag of tags) {
+        if (!/\brel=["']stylesheet["']/i.test(tag)) {
+            continue;
+        }
+        const href = tag.match(/\bhref=["']([^"']+)["']/i)?.[1];
+        if (href) {
+            return href;
+        }
+    }
+    throw new Error('Built index.html is missing stylesheet href.');
 }
 function extractCocosBootstrap(html) {
     const canvasClose = html.search(/<\/canvas>/i);

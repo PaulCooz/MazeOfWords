@@ -27,7 +27,7 @@ Each entry in `platforms.json`:
 2. **Build → Yandex Games** or **Build → Crazy Games**.
 3. Watch Console for `[Platform Builder]` start / finish / error lines.
 
-Repeat builds overwrite the same output folder.
+Repeat builds wipe `build/<output>/` first, then write a full new package.
 
 ## Add a platform
 
@@ -55,6 +55,7 @@ npm run build
 `templates/<output>/index.ejs` is applied after the `web-mobile` build. It must include:
 
 - `<%= projectName %>`
+- `<%= cssUrl %>` (stylesheet href from the built `index.html`)
 - `<%- include(cocosTemplate, {}) %>` (replaced with the engine bootstrap from the built `index.html`)
 
 Other files in that folder are copied into the output. Extra files that belong only to another platform’s template are removed from this output so SDKs and helpers do not leak across targets.

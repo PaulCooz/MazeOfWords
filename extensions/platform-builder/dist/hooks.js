@@ -16,6 +16,8 @@ const onBeforeBuild = async function (options) {
     if (!target) {
         return;
     }
+    const dest = (0, apply_template_1.emptyPlatformOutput)(options, target);
+    (0, global_1.log)(`Cleared ${dest}`);
     (0, global_1.log)(`Building ${target.label} as web-mobile → build/${target.output}/`);
 };
 exports.onBeforeBuild = onBeforeBuild;
