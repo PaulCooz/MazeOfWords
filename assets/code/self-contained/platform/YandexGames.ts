@@ -6,6 +6,10 @@ import { ControlFlags, IPlatform, IPlatformStorage } from "./Platform"
 const DataSyncIntervalSec = 4, InterDelaySec = 60
 const LangMap = { ["ru"]: "ru", ["be"]: "ru", ["kk"]: "ru", ["uk"]: "ru", ["uz"]: "ru" }
 
+const SaveIndexKey = "save_index"
+function getSaveIndex(data?: object) { return Number((data ? data[SaveIndexKey] : sys.localStorage.getItem(SaveIndexKey)) ?? 0) }
+function incSaveIndex() { sys.localStorage.setItem(SaveIndexKey, getSaveIndex() + 1) }
+
 export class YandexGames implements IPlatform {
     private yg: any
     private player: any
@@ -33,6 +37,7 @@ export class YandexGames implements IPlatform {
     }
 
     private changedLocalStorage = false
+    private incSaveIndex: () => void = () => { }
 
     constructor() {
         const self = this
@@ -55,10 +60,12 @@ export class YandexGames implements IPlatform {
                 else
                     sys.localStorage.setItem(key, JSON.stringify(value))
                 self.changedLocalStorage = true
+                self.incSaveIndex()
             },
             clear() {
                 sys.localStorage.clear()
                 self.changedLocalStorage = true
+                self.incSaveIndex()
             }
         }
     }
@@ -103,12 +110,16 @@ export class YandexGames implements IPlatform {
     private async pullData(resetStorageValues: () => void) {
         try {
             const data = await this.player.getData()
-            for (const key of Object.keys(data))
-                this.storage.set(key, data[key])
+            const indexRemote = getSaveIndex(data), indexLocal = getSaveIndex()
+            if (indexLocal == 0 || indexRemote > indexLocal) {
+                for (const key of Object.keys(data))
+                    this.storage.set(key, data[key])
+            }
         } catch (e) {
             console.error("cloud pull failed", e)
         }
         resetStorageValues()
+        this.incSaveIndex = incSaveIndex
     }
     private syncData() {
         this.changedLocalStorage = false
