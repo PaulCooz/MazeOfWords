@@ -36,8 +36,8 @@ If the console shows `Missing class: …` on Grid/Canvas, check **earlier** impo
 
 ## Yandex / editor
 
-- Runtime SDK comes from `build-templates/web-mobile/index.ejs` (`YG`, `YG_Player`, `YG_Lang`).
-- Editor/preview without `sdk.js` → `Yandex.ts` mock (no real ads/cloud).
+- Runtime SDK: `extensions/platform-builder/templates/*/index.ejs` sets `Platform` and `PlatformReady`; the adapter awaits the promise in `init()` then deletes both.
+- Editor/preview without a store template → `Mock` (no real ads/cloud).
 - Do not create `.meta`. Scene/prefab edits only when wiring; keep diffs minimal.
 
 ## Editor packer

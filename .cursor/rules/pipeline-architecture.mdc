@@ -10,7 +10,7 @@ alwaysApply: false
 
 ## Boot order (keep thin)
 
-1. `PopupManager.setup` + `Toast.setup`, then init Yandex (`initYandex` — waits for `index.ejs` globals or installs editor mock)
+1. `PopupManager.setup` + `Toast.setup`, then `Platform.init` (awaits `PlatformReady` from `index.ejs`, or `Mock` in the editor)
 2. `Config.load` + `CloudSave.pull` (parallel)
 3. Apply Yandex language unless `PlayerStorage.langChosen`
 4. `CloudSave.startPushLoop`, pipeline `awake`, `LoadingAPI.ready`, `setLeaderboardScore("level", …)`, first `levelStart`

@@ -40,11 +40,11 @@
   <script src="/sdk.js"></script>
   <script type="module">
     globalThis.Platform = "YG"
-
-    const yg = await YaGames.init()
-    globalThis.YG_Player = await yg.getPlayer()
-    globalThis.YG_Lang = yg.environment.i18n.lang
-    globalThis.YG = yg
+    globalThis.PlatformReady = (async () => {
+      const yg = await YaGames.init()
+      const player = await yg.getPlayer()
+      return { yg, player }
+    })()
   </script>
 </head>
 

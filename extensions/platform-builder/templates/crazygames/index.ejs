@@ -40,11 +40,12 @@
   <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
   <script type="module">
     globalThis.Platform = "CG"
-
-    const SDK = globalThis.CrazyGames.SDK
-    await SDK.init()
-    globalThis.CG_isReady = true
-    SDK.game.loadingStart()
+    globalThis.PlatformReady = (async () => {
+      const SDK = globalThis.CrazyGames.SDK
+      await SDK.init()
+      SDK.game.loadingStart()
+      return SDK
+    })()
   </script>
 </head>
 

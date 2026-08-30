@@ -1,9 +1,6 @@
 import { game, screen, Size } from "cc"
-/**
- * web-desktop keeps a fixed GameDiv size by default; after window/iframe
- * resize the canvas CSS box moves but input hit-tests stay stale.
- * Sync engine windowSize to the browser so touches/clicks track again.
- */
+
+// Sync engine windowSize to the browser so touches/clicks track again.
 export function installWebViewportFix() {
     let frame = 0
     const sync = () => {

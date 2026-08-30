@@ -1,4 +1,4 @@
-import { TextAsset } from "cc"
+import { AssetManager, TextAsset } from "cc"
 import { loadBundle, loadFile } from "../self-contained/Engine"
 import { Locale } from "../self-contained/Locale"
 import { Config } from "../Config"
@@ -10,10 +10,15 @@ const MaxWordLen = 25
 
 let wordsByLen: string[][]
 let loadedLocale: string
+let bundle: AssetManager.Bundle
+
+export function loadWordConfigBundle() {
+    return loadBundle("words")
+        .then(b => bundle = b)
+}
 
 async function checkWords(locale: string) {
     if (loadedLocale != locale) {
-        const bundle = await loadBundle("words")
         const text = (await loadFile<TextAsset>(`words_all_${locale}`, bundle)).text
 
         wordsByLen = []

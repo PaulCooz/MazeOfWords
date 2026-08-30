@@ -2,13 +2,16 @@ import { sys } from "cc"
 import { Delegate } from "../Delegate"
 import { Locale } from "../Locale"
 import { ControlFlags, IPlatform, IPlatformStorage } from "./Platform"
-import { waitSec } from "../Utils"
 
-const SdkWaitSec = 2, DataSyncIntervalSec = 4, InterDelaySec = 60
+const DataSyncIntervalSec = 4, InterDelaySec = 60
 const LangMap = { ["ru"]: "ru", ["be"]: "ru", ["kk"]: "ru", ["uk"]: "ru", ["uz"]: "ru" }
 
 export class YandexGames implements IPlatform {
-    get lang(): Locale { return LangMap[globalThis.YG_Lang] ?? "en" }
+    private yg: any
+    private player: any
+    private locale: Locale
+
+    get lang(): Locale { return this.locale }
 
     readonly storage: IPlatformStorage
 
@@ -22,7 +25,7 @@ export class YandexGames implements IPlatform {
     private loaded = false
     set gamePaused(v: boolean) {
         if (!this.loaded) {
-            globalThis.YG.features.LoadingAPI.ready()
+            this.yg.features.LoadingAPI.ready()
             this.loaded = true
         }
         this.gamePause = v
@@ -61,15 +64,20 @@ export class YandexGames implements IPlatform {
     }
 
     async init() {
-        while (globalThis.YG == undefined)
-            await waitSec(0.1)
+        const { yg, player } = await globalThis.PlatformReady
+        delete globalThis.PlatformReady
+        delete globalThis.Platform
 
-        globalThis.YG.on("game_api_pause", () => {
+        this.yg = yg
+        this.player = player
+        this.locale = LangMap[yg.environment.i18n.lang] ?? "en"
+
+        this.yg.on("game_api_pause", () => {
             this.yndxPause = true
             this.onControlChange.emit(this.control)
             this.refreshGameplay()
         })
-        globalThis.YG.on("game_api_resume", () => {
+        this.yg.on("game_api_resume", () => {
             this.yndxPause = false
             this.onControlChange.emit(this.control)
             this.refreshGameplay()
@@ -83,7 +91,7 @@ export class YandexGames implements IPlatform {
         ]).then(this.syncData.bind(this))
     }
     private async pullFlags(config: object) {
-        const flags = await globalThis.YG.getFlags()
+        const flags = await this.yg.getFlags()
         for (const key of Object.keys(flags)) {
             try {
                 config[key] = JSON.parse(flags[key])
@@ -94,7 +102,7 @@ export class YandexGames implements IPlatform {
     }
     private async pullData(resetStorageValues: () => void) {
         try {
-            const data = await globalThis.YG_Player.getData()
+            const data = await this.player.getData()
             for (const key of Object.keys(data))
                 this.storage.set(key, data[key])
         } catch (e) {
@@ -107,7 +115,7 @@ export class YandexGames implements IPlatform {
         setInterval(() => {
             if (this.changedLocalStorage) {
                 this.changedLocalStorage = false
-                globalThis.YG_Player
+                this.player
                     .setData(this.exportAllStorage())
                     .catch(console.error)
             }
@@ -115,7 +123,7 @@ export class YandexGames implements IPlatform {
     }
 
     private refreshGameplay() {
-        if (globalThis.YG == undefined)
+        if (this.yg == undefined)
             return
 
         const paused = this.yndxPause || this.gamePause
@@ -124,9 +132,9 @@ export class YandexGames implements IPlatform {
         this._paused = paused
 
         if (paused)
-            globalThis.YG.features.GameplayAPI.stop()
+            this.yg.features.GameplayAPI.stop()
         else
-            globalThis.YG.features.GameplayAPI.start()
+            this.yg.features.GameplayAPI.start()
     }
 
     private lastFullscreen = Date.now()
@@ -135,7 +143,7 @@ export class YandexGames implements IPlatform {
             return Promise.resolve(false)
 
         return new Promise<boolean>(resolve => {
-            globalThis.YG.adv.showFullscreenAdv({
+            this.yg.adv.showFullscreenAdv({
                 callbacks: {
                     onOpen: () => { },
                     onClose: (wasShown: boolean) => {
@@ -150,7 +158,7 @@ export class YandexGames implements IPlatform {
     showRewarded() {
         let success = false
         return new Promise<boolean>(resolve => {
-            globalThis.YG.adv.showRewardedVideo({
+            this.yg.adv.showRewardedVideo({
                 callbacks: {
                     onOpen: () => { },
                     onRewarded: () => success = true,
@@ -163,9 +171,9 @@ export class YandexGames implements IPlatform {
 
     async submitScore(value: number) {
         try {
-            if (!globalThis.YG_Player.isAuthorized())
+            if (!this.player.isAuthorized())
                 return
-            await globalThis.YG.leaderboards.setScore("level", value)
+            await this.yg.leaderboards.setScore("level", value)
         } catch (e) {
             console.error(e)
         }
